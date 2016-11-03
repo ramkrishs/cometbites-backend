@@ -3,11 +3,14 @@ language: java
 jdk:
   - oraclejdk8
 
+notifications:
+  email:
+    - rxp152830@utdallas.edu
+    - txs151730@utdallas.edu
+    - rxs142530@utdallas.edu
+    - kxs142830@utdallas.edu
+
 #Basic Setup and Run the build
 
-install:
-- mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-
-#Script to run
-script:
-- mvn clean install
+before_install:
+  - chmod +x mvnw
