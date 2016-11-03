@@ -2,3 +2,12 @@ language: java
 
 jdk:
   - oraclejdk8
+
+#Basic Setup and Run the build
+
+install:
+- mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+
+#Script to run
+script:
+- mvn clean install
