@@ -97,7 +97,6 @@ public class FoodJoints {
 		DBCursor cursor = ms.find(query);
 		
 		while(cursor.hasNext()) {
-			JSONObject foodJoint = new JSONObject();
 			DBObject foodJointObj =  cursor.next();
 			foodJoints.put(foodJointObj.get("menu"));
 			

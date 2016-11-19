@@ -34,25 +34,43 @@ public class Users {
 	private MongoTemplate mongoTemplate;
 
 	@GET
-	@Path("/{id}")
-	public String getProfile(@PathParam("id") String id) {
+	@Path("/{netid}")
+	public String getProfile(@PathParam("netid") String netid) {
 		
 		DBCollection ms = mongoTemplate.getCollection("users");
 		JSONArray users = new JSONArray();
 		DBObject query = new BasicDBObject();
-		query.put("_id",new ObjectId(id));
+		query.put("netid",netid);
 		DBCursor cursor = ms.find(query);
 		
 		while(cursor.hasNext()) {
 			JSONObject user = new JSONObject();
 			DBObject userObj =  cursor.next();
-			user.put("paymentoptions", userObj.get("paymentoptions"));
+			user.put("netid", userObj.get("netid"));
+			user.put("firstname", userObj.get("firstname"));
+			user.put("lastname", userObj.get("lastname"));
+			user.put("emailid", userObj.get("emailid"));
 			users.put(user);
-			
-			
 		}
 		
 		return users.toString();
+	}
+	@GET
+	@Path("/{netid}/payment")
+	public String getPayment(@PathParam("netid") String netid) {
+		
+		DBCollection ms = mongoTemplate.getCollection("users");
+		JSONArray users = new JSONArray();
+		DBObject query = new BasicDBObject();
+		query.put("netid",netid);
+		DBCursor cursor = ms.find(query);
+		
+		while(cursor.hasNext()) {
+			DBObject userObj =  cursor.next();
+			users.put(userObj.get("paymentoptions"));
+		}
+		
+		return users.get(0).toString();
 	}
 
 }
