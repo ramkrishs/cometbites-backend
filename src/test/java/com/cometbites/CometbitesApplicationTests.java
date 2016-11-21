@@ -1,4 +1,4 @@
-package store.cometbites;
+package com.cometbites;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
