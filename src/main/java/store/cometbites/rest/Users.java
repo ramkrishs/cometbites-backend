@@ -52,6 +52,7 @@ public class Users {
 			user.put("firstname", userObj.get("firstname"));
 			user.put("lastname", userObj.get("lastname"));
 			user.put("emailid", userObj.get("emailid"));
+			
 			users.put(user);
 		}
 		
@@ -132,7 +133,7 @@ public class Users {
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String saveUser(@FormParam("firstname") String firstname, @FormParam("lastname") String lastname, @FormParam("netid") String netid,
-			@FormParam("emailid") String emailid, @Context HttpHeaders header, @Context HttpServletResponse response) throws Exception {
+			@FormParam("emailid") String emailid,@FormParam("phone") String phone, @Context HttpHeaders header, @Context HttpServletResponse response) throws Exception {
 		
 		DBObject document = new BasicDBObject();
 		DBObject res = new BasicDBObject();
@@ -142,6 +143,7 @@ public class Users {
 			document.put("lastname", lastname);
 			document.put("netid", netid);
 			document.put("emailid", emailid);
+			document.put("phone", phone);
 			DBCollection ms = mongoTemplate.getCollection("users");
 			
 			//insert
