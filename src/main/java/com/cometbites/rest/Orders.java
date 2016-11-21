@@ -109,7 +109,7 @@ public class Orders {
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String saveOrder(@FormParam("fjID") String fjID, @FormParam("total") String total, @FormParam("netid") String netid,
-			@FormParam("cardNo") String cardNo, @FormParam("date") String date, @FormParam("invoice") String invoice, 
+			@FormParam("cardNo") String cardNo, @FormParam("date") String date, @FormParam("invoice") String invoice, @FormParam("items") String items, 
 			@Context HttpHeaders header, @Context HttpServletResponse response) throws Exception {
 		
 		DBObject document = new BasicDBObject();
@@ -122,6 +122,8 @@ public class Orders {
 			document.put("cardNo", cardNo);
 			document.put("date", date);
 			document.put("invoice", invoice);
+			JSONArray item_array = new JSONArray(items);
+			document.put("items", item_array);
 			DBCollection ms = mongoTemplate.getCollection("orders");
 			//insert
 			WriteResult result = ms.insert(document);
