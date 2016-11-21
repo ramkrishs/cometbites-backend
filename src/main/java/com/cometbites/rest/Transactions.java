@@ -1,4 +1,4 @@
-package store.cometbites.rest;
+package com.cometbites.rest;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
@@ -25,90 +25,89 @@ import com.mongodb.DBObject;
 import com.mongodb.WriteResult;
 
 @Component
-@Path("orders")
+@Path("transactions")
 @Produces(MediaType.APPLICATION_JSON)
-public class Orders {
+public class Transactions {
 	
 	@Autowired
 	private MongoTemplate mongoTemplate;
 	
 	@GET
-	public String getOrders() {
-		JSONArray orders = new JSONArray();
+	public String getTransactions() {
+		JSONArray transactions = new JSONArray();
 
-		DBCollection ms = mongoTemplate.getCollection("orders");
+		DBCollection ms = mongoTemplate.getCollection("transactions");
 		DBCursor cursor = ms.find();
 		
 		while(cursor.hasNext()) {
-			JSONObject order = new JSONObject();
+			JSONObject transaction = new JSONObject();
 			DBObject userObj =  cursor.next();
-			order.put("netid", userObj.get("netid"));
-			order.put("fjID", userObj.get("fjID"));
-			order.put("total", userObj.get("total"));
-			order.put("cardNo", userObj.get("cardNo"));
-			order.put("date", userObj.get("date"));
-			order.put("invoice", userObj.get("invoice"));
-			orders.put(order);
+			transaction.put("netid", userObj.get("netid"));
+			transaction.put("fjID", userObj.get("fjID"));
+			transaction.put("amount", userObj.get("amount"));
+			transaction.put("cardNo", userObj.get("cardNo"));
+			transaction.put("date", userObj.get("date"));
+			transaction.put("invoice", userObj.get("invoice"));
+			transactions.put(transaction);
 		}
 		
-		return orders.toString();
+		return transactions.toString();
 	}
-	
 	
 	@GET
 	@Path("/user/{netid}")
-	public String getOrderByNetID(@PathParam("netid") String netid) {
+	public String getTransactionByNetID(@PathParam("netid") String netid) {
 		
-		DBCollection ms = mongoTemplate.getCollection("orders");
-		JSONArray orders = new JSONArray();
+		DBCollection ms = mongoTemplate.getCollection("transactions");
+		JSONArray transactions = new JSONArray();
 		DBObject query = new BasicDBObject();
 		query.put("netid",netid);
 		DBCursor cursor = ms.find(query);
 		
 		while(cursor.hasNext()) {
-			JSONObject order = new JSONObject();
+			JSONObject transaction = new JSONObject();
 			DBObject userObj =  cursor.next();
-			order.put("netid", userObj.get("netid"));
-			order.put("fjID", userObj.get("fjID"));
-			order.put("total", userObj.get("total"));
-			order.put("cardNo", userObj.get("cardNo"));
-			order.put("date", userObj.get("date"));
-			order.put("invoice", userObj.get("invoice"));
-			orders.put(order);
+			transaction.put("netid", userObj.get("netid"));
+			transaction.put("fjID", userObj.get("fjID"));
+			transaction.put("amount", userObj.get("amount"));
+			transaction.put("cardNo", userObj.get("cardNo"));
+			transaction.put("date", userObj.get("date"));
+			transaction.put("invoice", userObj.get("invoice"));
+			transactions.put(transaction);
 		}
 		
-		return orders.toString();
+		return transactions.toString();
 	}
 	
 	@GET
 	@Path("/foodjoint/{fjID}")
-	public String getOrderByFoodJointID(@PathParam("fjID") String fjID) {
+	public String getTransactionByFoodJointID(@PathParam("fjID") String fjID) {
 		
-		DBCollection ms = mongoTemplate.getCollection("orders");
-		JSONArray orders = new JSONArray();
+		DBCollection ms = mongoTemplate.getCollection("transactions");
+		JSONArray transactions = new JSONArray();
 		DBObject query = new BasicDBObject();
 		query.put("fjID",fjID);
 		DBCursor cursor = ms.find(query);
 		
 		while(cursor.hasNext()) {
-			JSONObject order = new JSONObject();
+			JSONObject transaction = new JSONObject();
 			DBObject userObj =  cursor.next();
-			order.put("netid", userObj.get("netid"));
-			order.put("fjID", userObj.get("fjID"));
-			order.put("total", userObj.get("total"));
-			order.put("cardNo", userObj.get("cardNo"));
-			order.put("date", userObj.get("date"));
-			order.put("invoice", userObj.get("invoice"));
-			orders.put(order);
+			transaction.put("netid", userObj.get("netid"));
+			transaction.put("fjID", userObj.get("fjID"));
+			transaction.put("amount", userObj.get("amount"));
+			transaction.put("cardNo", userObj.get("cardNo"));
+			transaction.put("date", userObj.get("date"));
+			transaction.put("invoice", userObj.get("invoice"));
+			transactions.put(transaction);
 		}
 		
-		return orders.toString();
+		return transactions.toString();
 	}
 	
 	@POST
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String saveOrder(@FormParam("fjID") String fjID, @FormParam("total") String total, @FormParam("netid") String netid,
+	public String saveTransaction(@FormParam("fjID") String fjID, @FormParam("amount") String amount, @FormParam("netid") String netid,
 			@FormParam("cardNo") String cardNo, @FormParam("date") String date, @FormParam("invoice") String invoice, 
 			@Context HttpHeaders header, @Context HttpServletResponse response) throws Exception {
 		
@@ -117,12 +116,12 @@ public class Orders {
 		res.put("result", 401);
 		try{
 			document.put("fjID", fjID);
-			document.put("total", total);
+			document.put("amount", amount);
 			document.put("netid", netid);
 			document.put("cardNo", cardNo);
 			document.put("date", date);
 			document.put("invoice", invoice);
-			DBCollection ms = mongoTemplate.getCollection("orders");
+			DBCollection ms = mongoTemplate.getCollection("transactions");
 			//insert
 			WriteResult result = ms.insert(document);
 			
@@ -135,7 +134,5 @@ public class Orders {
 		
 		return res.toString();
 	}
-	
-	//TODO addItems
-	
+
 }

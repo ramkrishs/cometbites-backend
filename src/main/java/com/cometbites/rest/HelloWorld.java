@@ -1,4 +1,4 @@
-package store.cometbites.rest;
+package com.cometbites.rest;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -13,11 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
+import com.cometbites.config.DatabaseManager;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
-
-import store.cometbites.config.DatabaseManager;
 
 @Component
 @Path("hello")

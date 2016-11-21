@@ -1,16 +1,17 @@
-package store.cometbites.config;
+package com.cometbites.config;
 
 import javax.ws.rs.ApplicationPath;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.context.annotation.Configuration;
 
-import store.cometbites.rest.Checkout;
-import store.cometbites.rest.FoodJoints;
-import store.cometbites.rest.HelloWorld;
-import store.cometbites.rest.Orders;
-import store.cometbites.rest.Transactions;
-import store.cometbites.rest.Users;
+import com.cometbites.rest.Checkout;
+import com.cometbites.rest.FoodJoints;
+import com.cometbites.rest.HelloWorld;
+import com.cometbites.rest.Orders;
+import com.cometbites.rest.Token;
+import com.cometbites.rest.Transactions;
+import com.cometbites.rest.Users;
 
 
 
@@ -26,6 +27,7 @@ public class JerseyConfig extends ResourceConfig {
 		register(Checkout.class);
 		register(Transactions.class);
 		register(Orders.class);
+		register(Token.class);
 	}
 
 }

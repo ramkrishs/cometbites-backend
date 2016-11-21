@@ -1,4 +1,4 @@
-package store.cometbites.db;
+package com.cometbites.db;
 import org.springframework.data.annotation.Id;
 
 

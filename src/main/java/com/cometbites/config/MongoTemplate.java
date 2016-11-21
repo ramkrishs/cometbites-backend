@@ -1,4 +1,4 @@
-package store.cometbites.config;
+package com.cometbites.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

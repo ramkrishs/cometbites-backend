@@ -1,4 +1,4 @@
-package store.cometbites.rest;
+package com.cometbites.rest;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;

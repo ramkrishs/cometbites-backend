@@ -1,4 +1,4 @@
-package store.cometbites.config;
+package com.cometbites.config;
 
 import java.util.Arrays;
 

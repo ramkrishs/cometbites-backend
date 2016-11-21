@@ -1,4 +1,4 @@
-package store.cometbites.rest;
+package com.cometbites.rest;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
