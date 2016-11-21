@@ -107,7 +107,7 @@ public class Transactions {
 	@POST
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String saveUser(@FormParam("fjID") String fjID, @FormParam("amount") String amount, @FormParam("netid") String netid,
+	public String saveTransaction(@FormParam("fjID") String fjID, @FormParam("amount") String amount, @FormParam("netid") String netid,
 			@FormParam("cardNo") String cardNo, @FormParam("date") String date, @FormParam("invoice") String invoice, 
 			@Context HttpHeaders header, @Context HttpServletResponse response) throws Exception {
 		

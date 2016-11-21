@@ -21,15 +21,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
-
-import org.bson.types.ObjectId;
-import store.cometbites.config.DatabaseManager;
 
 @Component
 @Path("users")
@@ -62,6 +57,7 @@ public class Users {
 		
 		return users.toString();
 	}
+	
 	@GET
 	@Path("/{netid}/payment")
 	public String getPayment(@PathParam("netid") String netid) {
@@ -88,6 +84,51 @@ public class Users {
 	}
 	
 	@POST
+	@Path("/{netid}/payment")
+	@Consumes("application/x-www-form-urlencoded")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String addPaymentOption(@PathParam("netid") String netid, @FormParam("cardname") String cardname, @FormParam("cardno") String cardno, @FormParam("cvv") String cvv,
+			@FormParam("expdate") String expdate, @Context HttpHeaders header, @Context HttpServletResponse response) throws Exception {
+		
+		DBObject document = new BasicDBObject();
+		DBObject res = new BasicDBObject();
+		res.put("result", 401);
+		
+		try{
+			document.put("cardname", cardname);
+			document.put("cardno", cardno);
+			
+			if(cvv != null && !"".equals(cvv)) {
+				document.put("cvv", cvv);
+				document.put("expdate", expdate);
+			}
+			
+			DBCollection ms = mongoTemplate.getCollection("users");
+
+			DBObject query = new BasicDBObject();
+			query.put("netid",netid);
+			
+			
+			
+			DBObject value = new BasicDBObject();
+			DBObject newOption = new BasicDBObject();
+			
+			newOption.put("paymentoptions", document);
+			value.put("$push", newOption);
+			
+			WriteResult result = ms.update(query, value);
+			
+			if(result.wasAcknowledged()){
+				res.put("result", 200);
+			}
+		}
+		catch(Exception e){
+		}
+		
+		return res.toString();
+	}
+	
+	@POST
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String saveUser(@FormParam("firstName") String firstName, @FormParam("lastName") String lastName,@FormParam("netid") String netid,
@@ -108,16 +149,11 @@ public class Users {
 			if(result.wasAcknowledged()){
 				res.put("result", 200);
 			}
-			
-			
-			
 		}
 		catch(Exception e){
-			
 		}
 		
 		return res.toString();
-		
 	}
 
 }
