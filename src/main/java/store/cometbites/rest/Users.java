@@ -72,12 +72,19 @@ public class Users {
 		query.put("netid",netid);
 		DBCursor cursor = ms.find(query);
 		
+		DBObject res = new BasicDBObject();
+		res.put("result", "Resource not found");
+		
 		while(cursor.hasNext()) {
 			DBObject userObj =  cursor.next();
 			users.put(userObj.get("paymentoptions"));
 		}
 		
-		return users.get(0).toString();
+		if(users.length() > 0){
+			return users.get(0).toString();
+		}
+		
+		return res.toString();
 	}
 	
 	@POST
