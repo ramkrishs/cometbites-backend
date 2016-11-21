@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import store.cometbites.rest.Checkout;
 import store.cometbites.rest.FoodJoints;
 import store.cometbites.rest.HelloWorld;
+import store.cometbites.rest.Orders;
 import store.cometbites.rest.Transactions;
 import store.cometbites.rest.Users;
 
@@ -24,6 +25,7 @@ public class JerseyConfig extends ResourceConfig {
 		register(Users.class);	
 		register(Checkout.class);
 		register(Transactions.class);
+		register(Orders.class);
 	}
 
 }

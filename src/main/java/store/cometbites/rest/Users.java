@@ -131,18 +131,19 @@ public class Users {
 	@POST
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String saveUser(@FormParam("firstName") String firstName, @FormParam("lastName") String lastName,@FormParam("netid") String netid,
-			@FormParam("email") String email,@Context HttpHeaders header, @Context HttpServletResponse response) throws Exception {
+	public String saveUser(@FormParam("firstname") String firstname, @FormParam("lastname") String lastname, @FormParam("netid") String netid,
+			@FormParam("emailid") String emailid, @Context HttpHeaders header, @Context HttpServletResponse response) throws Exception {
 		
 		DBObject document = new BasicDBObject();
 		DBObject res = new BasicDBObject();
 		res.put("result", 401);
 		try{
-			document.put("firstname", firstName);
-			document.put("lastname", lastName);
+			document.put("firstname", firstname);
+			document.put("lastname", lastname);
 			document.put("netid", netid);
-			document.put("emailid", email);
+			document.put("emailid", emailid);
 			DBCollection ms = mongoTemplate.getCollection("users");
+			
 			//insert
 			WriteResult result = ms.insert(document);
 			
