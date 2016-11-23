@@ -197,6 +197,36 @@ public class Orders {
 		return res.toString();
 	}
 	
+	//TODO transform this into a service and test
+	public float getOrderWaitTime(int foodJointID) {
+		JSONArray orders = new JSONArray(getOrders());
+		int numberOfOrders = orders.length();
+		
+		float waitTime = getFoodJointWaitTime(foodJointID);
+		
+		float orderWaitTime = waitTime + waitTime*numberOfOrders;
+		
+		return orderWaitTime;
+	}
+	
+	public float getFoodJointWaitTime(int id) {
+		DBCollection ms = mongoTemplate.getCollection("foodjoints");
+		DBObject query = new BasicDBObject();
+		query.put("fjID", id);
+		DBCursor cursor = ms.find(query);
+		
+		float waitTime = 0f;
+		
+		while(cursor.hasNext()) {
+			DBObject foodJointObj =  cursor.next();
+			
+			waitTime = Float.parseFloat(foodJointObj.get("wait_time").toString());
+		}
+		
+		return waitTime;
+	}
+	
+	
 	//TODO ADD ITEM (UNUSED)
 	//FIXME NOT FINISHED
 	@POST

@@ -109,8 +109,6 @@ public class Users {
 			DBObject query = new BasicDBObject();
 			query.put("netid",netid);
 			
-			
-			
 			DBObject value = new BasicDBObject();
 			DBObject newOption = new BasicDBObject();
 			
