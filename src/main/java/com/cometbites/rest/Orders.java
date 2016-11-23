@@ -1,6 +1,8 @@
 package com.cometbites.rest;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
+import com.cometbites.util.Util;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
@@ -144,30 +147,51 @@ public class Orders {
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String saveOrder(@FormParam("fjID") String fjID, @FormParam("total") String total, @FormParam("netid") String netid,
-			@FormParam("cardNo") String cardNo, @FormParam("date") String date, @FormParam("invoice") String invoice, @FormParam("items") String items, 
+			@FormParam("cardNo") String cardNo, @FormParam("date") String date, @FormParam("items") String items, 
 			@Context HttpHeaders header, @Context HttpServletResponse response) throws Exception {
 		
 		DBObject document = new BasicDBObject();
 		DBObject res = new BasicDBObject();
 		res.put("result", 401);
+		
+		JSONArray orders = new JSONArray(getOrders());
+		String newInvoice = Util.generateNewInvoce(orders.length());
+		
 		try{
 			document.put("fjID", fjID);
 			document.put("total", total);
 			document.put("netid", netid);
 			document.put("cardNo", cardNo);
 			document.put("date", date);
-			document.put("invoice", invoice);
-			JSONArray item_array = new JSONArray(items);
-			document.put("items", item_array);
+			document.put("invoice", newInvoice);
+			
+			List<DBObject> itemObjects = new ArrayList<>();
+
+			JSONArray itemsJSON = new JSONArray(items);
+			for (Object object : itemsJSON) {
+				JSONObject itemJSON = (JSONObject) object;
+				
+				DBObject item = new BasicDBObject();
+				item.put("name", itemJSON.get("name"));
+				item.put("quantity", itemJSON.get("quantity"));
+				item.put("price", itemJSON.get("price"));
+				
+				itemObjects.add(item);
+			}
+			
+			document.put("items", itemObjects);
+			
 			DBCollection ms = mongoTemplate.getCollection("orders");
 			//insert
 			WriteResult result = ms.insert(document);
 			
 			if(result.wasAcknowledged()){
 				res.put("result", 200);
+				res.put("invoice", newInvoice);
 			}
 		}
 		catch(Exception e){
+			e.printStackTrace();
 		}
 		
 		return res.toString();
@@ -227,5 +251,6 @@ public class Orders {
 		
 		return "401";
 	}
+	
 	
 }
