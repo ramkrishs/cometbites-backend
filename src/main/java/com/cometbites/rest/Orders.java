@@ -198,10 +198,12 @@ public class Orders {
 	}
 	
 	//TODO transform this into a service and test
-	public float getOrderWaitTime(int foodJointID) {
+	@GET
+	@Path("/{id}/wait_time")
+	public float getOrderWaitTime(@PathParam("id") int foodJointID) {
 		JSONArray orders = new JSONArray(getOrders());
 		int numberOfOrders = orders.length();
-		
+		System.out.println(numberOfOrders);
 		float waitTime = getFoodJointWaitTime(foodJointID);
 		
 		float orderWaitTime = waitTime + waitTime*numberOfOrders;
