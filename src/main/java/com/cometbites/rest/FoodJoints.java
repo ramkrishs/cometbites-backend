@@ -16,9 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
-import com.cometbites.config.DatabaseManager;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
@@ -52,8 +50,6 @@ public class FoodJoints {
 			
 		}
 		
-		
-
 		return foodJoints.toString();
 	}
 	
@@ -80,11 +76,10 @@ public class FoodJoints {
 			foodJoints.put(foodJoint);
 			
 		}
-		
-		
 
 		return foodJoints.toString();
 	}
+	
 	@GET
 	@Path("/{id}/menu")
 	public String getMenu(@PathParam("id") String id) {
@@ -103,5 +98,38 @@ public class FoodJoints {
 		
 		return foodJoints.get(0).toString();
 	}
-
+	
+	public float calculateWaitTime(int id) {
+		DBCollection ms = mongoTemplate.getCollection("foodjoints");
+		DBObject query = new BasicDBObject();
+		query.put("fjID", id);
+		DBCursor cursor = ms.find(query);
+		
+		float chefsEfficiency, helpersEfficiency, delayTime, waitTime = 0;
+		int numberOfChefs, numberOfHelpers;
+		
+		while(cursor.hasNext()) {
+			DBObject foodJointObj =  cursor.next();
+			
+			chefsEfficiency = Float.parseFloat(foodJointObj.get("chef_efficiency").toString());
+			numberOfChefs = Integer.parseInt(foodJointObj.get("chef_total").toString());
+			
+			helpersEfficiency = Float.parseFloat(foodJointObj.get("helper_efficiency").toString());
+			numberOfHelpers = Integer.parseInt(foodJointObj.get("helper_total").toString());
+			
+			delayTime = Float.parseFloat(foodJointObj.get("delay_time").toString());
+			
+			waitTime = (chefsEfficiency/numberOfChefs) + (helpersEfficiency/numberOfHelpers) + delayTime;
+		}
+		
+		DBObject document = new BasicDBObject();
+		document.put("wait_time", Float.toString(waitTime));
+		DBObject value = new BasicDBObject();
+		value.put("$set", document);
+		
+		ms.update(query, value);
+		
+		return waitTime;
+	}
+	
 }
