@@ -53,6 +53,7 @@ public class Orders {
 			order.put("cardNo", userObj.get("cardNo"));
 			order.put("date", userObj.get("date"));
 			order.put("invoice", userObj.get("invoice"));
+			order.put("items", userObj.get("items"));
 			orders.put(order);
 		}
 		
@@ -79,6 +80,7 @@ public class Orders {
 			order.put("cardNo", userObj.get("cardNo"));
 			order.put("date", userObj.get("date"));
 			order.put("invoice", userObj.get("invoice"));
+			order.put("items", userObj.get("items"));
 			orders.put(order);
 		}
 		
@@ -104,6 +106,7 @@ public class Orders {
 			order.put("cardNo", userObj.get("cardNo"));
 			order.put("date", userObj.get("date"));
 			order.put("invoice", userObj.get("invoice"));
+			order.put("items", userObj.get("items"));
 			orders.put(order);
 		}
 		
