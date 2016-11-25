@@ -60,7 +60,6 @@ public class Orders {
 		return orders.toString();
 	}
 	
-	
 	@GET
 	@Path("/user/{netid}")
 	public String getOrderByNetID(@PathParam("netid") String netid) {
