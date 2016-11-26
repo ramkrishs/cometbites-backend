@@ -1,9 +1,9 @@
 package com.cometbites.model;
 
-import java.util.Date;
-
 import org.json.JSONObject;
 import org.springframework.data.annotation.Id;
+
+import com.cometbites.util.Util;
 
 
 public class Payment {
@@ -22,8 +22,8 @@ public class Payment {
     	
     	if(option.getString("cvv") == null) {
     		card = new CometCard(Integer.parseInt(option.getString("cardno")));
-    	} else {//FIXME date is not properly saved
-    		card = new CreditCard(Integer.parseInt(option.getString("cardno")), new Date(option.getString("expdate")), Integer.parseInt(option.getString("cvv")));
+    	} else {
+    		card = new CreditCard(Integer.parseInt(option.getString("cardno")), Util.parseExpirationDate(option.getString("expdate")), Integer.parseInt(option.getString("cvv")));
     	}
     	
     	card.setCardName(option.getString("cardname"));

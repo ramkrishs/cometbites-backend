@@ -1,7 +1,9 @@
 package com.cometbites.util;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
@@ -49,6 +51,18 @@ public class Util {
 		SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ssa");
 
 		return format.format(cal.getTime());
+	}
+	
+	public static Date parseExpirationDate(String date) {
+		SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+		
+		try {
+			return format.parse(date);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 	
 }
