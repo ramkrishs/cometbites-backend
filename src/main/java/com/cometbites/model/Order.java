@@ -5,7 +5,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
+
+import com.cometbites.db.DBFacade;
 
 public class Order {
 	@Id
@@ -16,7 +19,9 @@ public class Order {
 	private Date date;
 	private Map<String, LineItem> orderItems;
 	
-
+	@Autowired
+	private DBFacade dBFacade;
+	
 	public Order() {
 		orderItems = new HashMap<String, LineItem>();
 	}
@@ -27,17 +32,17 @@ public class Order {
 		orderItems.put(item.getId(), lineItem);
 	}
 
-	public void updateQuantity(String itemID, int quantity) {
-		if(orderItems.containsKey(itemID)) {
-			LineItem lineItem = orderItems.get(itemID);
+	public void updateQuantity(Item item, int quantity) {
+		if(orderItems.containsKey(item.getId())) {
+			LineItem lineItem = orderItems.get(item.getId());
 			lineItem.setQuantity(lineItem.getQuantity() + quantity);
 			
-			orderItems.put(itemID, lineItem); 
+			orderItems.put(item.getId(), lineItem); 
 		} else {
-			LineItem lineItem = new LineItem(new Item(itemID));
+			LineItem lineItem = new LineItem(item);
 			lineItem.setQuantity(quantity);
 			
-			orderItems.put(itemID, lineItem); 
+			orderItems.put(item.getId(), lineItem); 
 		}
 		
 		updateTotal();
@@ -90,4 +95,36 @@ public class Order {
 	public Collection<LineItem> getOrderItems() {
 		return orderItems.values();
 	}
+
+	public Ticket concludeOrder(String paymentOption) {
+		
+		Payment payment = new Payment(paymentOption);
+		payment.setAmount(total);
+		int cardNumber = payment.getCard().getNumber();
+		
+		
+		boolean authorized = UTDPaymentAdapter.getInstance().authorize(cardNumber);
+		if(authorized) {
+			UTDPaymentAdapter.getInstance().charge(cardNumber, payment.getAmount());
+		}
+		
+		//TODO giving null for db
+//		dBFacade.saveTransaction(payment);
+		
+		updateStatus();
+		calculateWaitTime();
+		
+		Ticket ticket = new Ticket();
+		
+		return ticket;
+	}
+	
+	private void updateStatus() {
+		// TODO Auto-generated method stub
+	}
+
+	private void calculateWaitTime() {
+		// TODO Auto-generated method stub
+	}
+	
 }

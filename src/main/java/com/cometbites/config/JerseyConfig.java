@@ -5,10 +5,12 @@ import javax.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.context.annotation.Configuration;
 
+import com.cometbites.db.DBFacade;
 import com.cometbites.rest.Checkout;
 import com.cometbites.rest.FoodJoints;
 import com.cometbites.rest.HelloWorld;
 import com.cometbites.rest.Orders;
+import com.cometbites.rest.Register;
 import com.cometbites.rest.Token;
 import com.cometbites.rest.Transactions;
 import com.cometbites.rest.Users;
@@ -28,6 +30,7 @@ public class JerseyConfig extends ResourceConfig {
 		register(Transactions.class);
 		register(Orders.class);
 		register(Token.class);
+		register(Register.class);
 	}
 
 }

@@ -40,6 +40,18 @@ public class Menu {
 
 	@Override
 	public String toString() {
-		return String.format("Menu[id=%s, numberOfItems='%s']", id, numberOfItems);
+		StringBuilder aux = new StringBuilder("[");
+		
+		for (Item item : items) {
+			aux.append(item.toString()).append(",");
+		}
+		
+		//remove the ',' after last item
+		if(aux.length() > 1) 
+			aux.deleteCharAt(aux.length()-1);
+		
+		aux.append("]");
+		
+		return String.format(aux.toString());
 	}
 }

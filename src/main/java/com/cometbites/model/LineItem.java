@@ -42,7 +42,8 @@ public class LineItem {
 
 	@Override
 	public String toString() {
-		return String.format("LineItem[id=%s, name='%s', quantity='%s']", getId(), item.getName(), quantity);
+		StringBuilder aux = new StringBuilder("{ \"id\": \"%s\", \"name\": \"%s\", \"price\": \"%s\", \"quantity\": \"%s\" }");
+		return String.format(aux.toString(), item.getId(), item.getName(), Double.toString(item.getPrice()), Integer.toString(quantity));
 	}
 
 	@Override

@@ -8,6 +8,7 @@ public class Item {
 
 	private String name;
 	private String description;
+	private String image;
 	private double price;
 
 	public Item() {
@@ -18,6 +19,13 @@ public class Item {
 	}
 
 	public Item(String name, String description, double price) {
+		this.name = name;
+		this.description = description;
+		this.price = price;
+	}
+	
+	public Item(String id, String name, String description, double price) {
+		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.price = price;
@@ -57,7 +65,7 @@ public class Item {
 
 	@Override
 	public String toString() {
-		return String.format("Item[id=%s, name='%s', description='%s', price='%s']", id, name, description,
-				Double.toString(price));
+		StringBuilder aux = new StringBuilder("{ \"id\": \"%s\", \"name\": \"%s\", \"description\": \"%s\", \"price\": \"%s\", \"image\": \"%s\" }");
+		return String.format(aux.toString(), id, name, description, Double.toString(price), image);
 	}
 }

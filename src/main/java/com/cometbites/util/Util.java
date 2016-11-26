@@ -1,7 +1,7 @@
 package com.cometbites.util;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
@@ -43,4 +43,12 @@ public class Util {
 		
 		return newInvoce.toString();
 	}
+	
+	public static String getCurrentTime() {
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ssa");
+
+		return format.format(cal.getTime());
+	}
+	
 }

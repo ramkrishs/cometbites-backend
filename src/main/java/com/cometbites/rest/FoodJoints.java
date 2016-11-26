@@ -85,18 +85,17 @@ public class FoodJoints {
 	public String getMenu(@PathParam("id") String id) {
 		
 		DBCollection ms = mongoTemplate.getCollection("foodjoints");
-		JSONArray foodJoints = new JSONArray();
+		JSONArray foodJointMenu = new JSONArray();
 		DBObject query = new BasicDBObject();
 		query.put("fjID", Integer.parseInt(id));
 		DBCursor cursor = ms.find(query);
 		
 		while(cursor.hasNext()) {
 			DBObject foodJointObj =  cursor.next();
-			foodJoints.put(foodJointObj.get("menu"));
-			
+			foodJointMenu.put(foodJointObj.get("menu"));
 		}
 		
-		return foodJoints.get(0).toString();
+		return foodJointMenu.get(0).toString();
 	}
 	
 	public float calculateWaitTime(int id) {
