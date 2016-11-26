@@ -76,6 +76,7 @@ public class DBFacade {
 			item.setName(menuItem.getString("name"));
 			item.setDescription(menuItem.getString("description"));
 			item.setPrice(Double.parseDouble(menuItem.getString("price")));
+			item.setImage(menuItem.getString("image"));
 			
 			itemList.add(item);
 		}
