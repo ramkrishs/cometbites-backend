@@ -1,6 +1,7 @@
 package com.cometbites.db;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import com.cometbites.model.Item;
 import com.cometbites.model.LineItem;
 import com.cometbites.model.Order;
 import com.cometbites.model.Payment;
+import com.cometbites.model.Status;
 import com.cometbites.util.Util;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
@@ -172,5 +174,38 @@ public class DBFacade {
 		
 		return orders.toString();
 	}
+	
+	public void createOrderStatus() {
+		DBCollection coll = mongoTemplate.getCollection("cappedOrders");
+
+		Date now = new Date();
+		
+		BasicDBObject timeNow = new BasicDBObject("create_date", now);
+		timeNow.put("phone", "4697203472");
+		timeNow.put("ord_id", "rxs101010");
+		timeNow.put("order_status", "new");
+		
+		
+		coll.insert(timeNow);
+		
+	}
+	
+	public void updateOrderStatus() {
+		DBCollection ms = mongoTemplate.getCollection("cappedOrders");
+
+		BasicDBObject timeNow = new BasicDBObject("create_date", new Date());
+		timeNow.put("order_status", "2");
+		System.out.println(Status.IN_PREPARATION.getValue());
+		
+		DBObject value = new BasicDBObject();
+		value.put("$set", timeNow);
+		
+		DBObject query = new BasicDBObject();
+		query.put("ord_id", "rxp11");
+		
+		ms.update(query, value);
+	}
+	
+	
 
 }

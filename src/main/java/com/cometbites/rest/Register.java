@@ -99,4 +99,11 @@ public class Register {
 		return ticket.toString();
 	}
 	
+	//FIXME TESTS
+	@GET
+	@Path("/date")
+	public void getDate() {
+		dBFacade.createOrderStatus();
+	}
+	
 }
