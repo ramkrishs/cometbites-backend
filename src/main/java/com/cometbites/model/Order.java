@@ -24,6 +24,7 @@ public class Order {
 	
 	public Order() {
 		orderItems = new HashMap<String, LineItem>();
+		status = Status.NEW;
 	}
 	
 	public void addItem(Item item) {
@@ -120,7 +121,7 @@ public class Order {
 	}
 	
 	private void updateStatus() {
-		// TODO Auto-generated method stub
+		status = Status.IN_PREPARATION;
 	}
 
 	private void calculateWaitTime() {

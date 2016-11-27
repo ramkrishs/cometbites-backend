@@ -123,10 +123,10 @@ public class DBFacade {
 		
 		try{
 			document.put("id", order.getId());
-			document.put("status", order.getStatus());
-			document.put("total", order.getTotal());
+			document.put("status", order.getStatus().getValue());
+			document.put("total", Double.toString(order.getTotal()));
 			document.put("date", Util.getCurrentTime());
-			document.put("invoice", newInvoice);//FIXME status is null
+			document.put("invoice", newInvoice);
 
 			List<DBObject> itemObjects = new ArrayList<>();
 			
@@ -135,8 +135,8 @@ public class DBFacade {
 				
 				dbItem.put("id", lineItem.getItem().getId());
 				dbItem.put("name", lineItem.getItem().getName());
-				dbItem.put("price", lineItem.getItem().getPrice());
-				dbItem.put("quantity", lineItem.getQuantity());//FIXME update to match db
+				dbItem.put("price", Double.toString(lineItem.getItem().getPrice()));
+				dbItem.put("quantity", Integer.toString(lineItem.getQuantity()));
 				
 				itemObjects.add(dbItem);
 			}
