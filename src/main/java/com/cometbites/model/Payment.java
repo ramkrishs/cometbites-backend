@@ -21,9 +21,9 @@ public class Payment {
     	JSONObject option = new JSONObject(paymentOption);
     	
     	if(option.getString("cvv") == null) {
-    		card = new CometCard(Integer.parseInt(option.getString("cardno")));
+    		card = new CometCard(Long.parseLong(option.getString("cardno")));
     	} else {
-    		card = new CreditCard(Integer.parseInt(option.getString("cardno")), Util.parseExpirationDate(option.getString("expdate")), Integer.parseInt(option.getString("cvv")));
+    		card = new CreditCard(Long.parseLong(option.getString("cardno")), Util.parseExpirationDate(option.getString("expdate")), Integer.parseInt(option.getString("cvv")));
     	}
     	
     	card.setCardName(option.getString("cardname"));

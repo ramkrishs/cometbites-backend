@@ -18,6 +18,7 @@ import com.cometbites.db.DBFacade;
 import com.cometbites.model.Customer;
 import com.cometbites.model.FoodJoint;
 import com.cometbites.model.Item;
+import com.cometbites.model.LineItem;
 import com.cometbites.model.Order;
 import com.cometbites.model.Ticket;
 
@@ -75,6 +76,15 @@ public class Register {
 		
 		currentOrder.updateQuantity(new Item(itemID, name, description, Double.parseDouble(price)), Integer.parseInt(quantity));
 		
+		System.out.println("QUANTITY INFORMED: "+quantity);
+		
+		System.out.println(currentCustomer.getId());
+		
+		for (LineItem item : currentOrder.getOrderItems()) {
+			System.out.println("LINE ITEM: "+item.getItem().getName()+" x"+item.getQuantity());
+		}
+		System.out.println();
+		
 		return Double.toString(currentOrder.getTotal());
 	}
 	
@@ -98,6 +108,7 @@ public class Register {
 		
 		String code = dBFacade.saveOrder(currentOrder);
 		
+		currentOrder.setId(code);
 		ticket.setCode(code);
 		
 		return ticket.toString();
