@@ -94,8 +94,8 @@ public class Register {
 		return currentOrder.getOrderItems().toString();
 	}
 	
-	@POST
-	@Path("/order")
+	@GET
+	@Path("/checkout")
 	public String checkOut() {
 		return dBFacade.getPaymentOptions(currentCustomer.getId());
 	}
