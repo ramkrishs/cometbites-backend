@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.cometbites.db.DBFacade;
+import com.cometbites.model.Customer;
 import com.cometbites.model.FoodJoint;
 import com.cometbites.model.Item;
 import com.cometbites.model.Order;
@@ -27,13 +28,17 @@ public class Register {
 	
 	//FIXME info from client and/or login ???
 //	private IDevice currentCustomer;
+	private Customer currentCustomer;
 	private Order currentOrder;
 	
 	@Autowired
 	private DBFacade dBFacade;
 	
 	@GET
-	public String startOrder() {
+	@Path("/{customerID}")
+	public String startOrder(@PathParam("customerID") String customerID) {
+		currentCustomer = new Customer(customerID);
+		
 		return dBFacade.getFoodJoints();
 	}
 	
@@ -54,6 +59,7 @@ public class Register {
 		
 		if(currentOrder == null) {
 			currentOrder = new Order();
+			currentOrder.setCustomer(currentCustomer);
 		}
 		
 		Item item = new Item(itemID, name, description, Double.parseDouble(price));
@@ -81,9 +87,7 @@ public class Register {
 	@POST
 	@Path("/order")
 	public String checkOut() {
-		//TODO figure out client
-//		return dBFacade.getPaymentOptions(currentCustomer.getID());
-		return dBFacade.getPaymentOptions("rxp152830");
+		return dBFacade.getPaymentOptions(currentCustomer.getId());
 	}
 	
 	@POST

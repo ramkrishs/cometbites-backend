@@ -4,12 +4,19 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+import com.cometbites.model.Customer;
+import com.cometbites.model.Order;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 
 public class Util {
+	
+	//FIXME decide on customers online
+	public static Map<Customer, Order> currentCustomers = new HashMap<>();
 	
 	public static final String ACCOUNT_SID = "ACb447e910cc2c38920a8733f10210063e";
 	public static final String AUTH_TOKEN = "a6556df008a04685cd0b5ea3070d2945";

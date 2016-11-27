@@ -19,12 +19,19 @@ public class Order {
 	private Date date;
 	private Map<String, LineItem> orderItems;
 	
+	private Customer customer;
+	//phoneNumber
+	//Customer
+	//foodJoint
+	
 	@Autowired
 	private DBFacade dBFacade;
 	
 	public Order() {
 		orderItems = new HashMap<String, LineItem>();
 		status = Status.NEW;
+		
+		
 	}
 	
 	public void addItem(Item item) {
@@ -97,11 +104,19 @@ public class Order {
 		return orderItems.values();
 	}
 
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
 	public Ticket concludeOrder(String paymentOption) {
 		
 		Payment payment = new Payment(paymentOption);
 		payment.setAmount(total);
-		int cardNumber = payment.getCard().getNumber();
+		long cardNumber = payment.getCard().getNumber();
 		
 		
 		boolean authorized = UTDPaymentAdapter.getInstance().authorize(cardNumber);

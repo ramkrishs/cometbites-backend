@@ -56,6 +56,9 @@ public class Users {
 			users.put(user);
 		}
 		
+		//TODO implement online customer
+//		Util.currentCustomers.put(new Customer(), null);
+		
 		return users.toString();
 	}
 	

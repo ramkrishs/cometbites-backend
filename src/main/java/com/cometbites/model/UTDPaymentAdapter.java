@@ -13,12 +13,12 @@ public class UTDPaymentAdapter implements IExternalPayment {
 
 	// TODO Implement real dummy operations
 	@Override
-	public boolean authorize(int cardNumber) {
+	public boolean authorize(long cardNumber) {
 		return true;
 	}
 
 	@Override
-	public boolean charge(int cardNumber, double value) {
+	public boolean charge(long cardNumber, double value) {
 		return true;
 	}
 

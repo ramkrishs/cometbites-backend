@@ -10,15 +10,15 @@ public class CreditCard extends Card {
     @Id
     public String id;
 
-    private int cardNumber;
+    private long cardNumber;
     private Date expirationDate;
     private int cvv;
     
-	public CreditCard(int cardNumber) {
+	public CreditCard(long cardNumber) {
 		this.cardNumber = cardNumber;
 	}
 
-	public CreditCard(int cardNumber, Date expirationDate, int cvv) {
+	public CreditCard(long cardNumber, Date expirationDate, int cvv) {
 		this.cardNumber = cardNumber;
 		this.expirationDate = expirationDate;
 		this.cvv = cvv;
@@ -41,7 +41,7 @@ public class CreditCard extends Card {
 	}
 
 	@Override
-	public int getNumber() {
+	public long getNumber() {
 		return cardNumber;
 	}
 
@@ -49,7 +49,7 @@ public class CreditCard extends Card {
     public String toString() {
         return String.format(
                 "CreditCard[id=%s, utdID='%s']",
-                id, Integer.toString(cardNumber));
+                id, Long.toString(cardNumber));
     }
 
 }

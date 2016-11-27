@@ -8,14 +8,14 @@ public class CometCard extends Card {
     @Id
     public String id;
 
-    private int utdID;
+    private long utdID;
 	
-    public CometCard(int utdID) {
+    public CometCard(long utdID) {
 		this.utdID = utdID;
 	}
 
 	@Override
-	public int getNumber() {
+	public long getNumber() {
 		return utdID;
 	}
 
@@ -23,7 +23,7 @@ public class CometCard extends Card {
     public String toString() {
         return String.format(
                 "CometCard[id=%s, utdID='%s']",
-                id, Integer.toString(utdID));
+                id, Long.toString(utdID));
     }
 
 }

@@ -2,7 +2,7 @@ package com.cometbites.model;
 
 public interface IExternalPayment {
 	
-	boolean authorize(int cardNumber);
-	boolean charge(int cardNumber, double value);
+	boolean authorize(long cardNumber);
+	boolean charge(long cardNumber, double value);
 
 }
