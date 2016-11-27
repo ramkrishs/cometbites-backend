@@ -42,8 +42,18 @@ public class LineItem {
 
 	@Override
 	public String toString() {
-		StringBuilder aux = new StringBuilder("{ \"id\": \"%s\", \"name\": \"%s\", \"price\": \"%s\", \"quantity\": \"%s\" }");
-		return String.format(aux.toString(), item.getId(), item.getName(), Double.toString(item.getPrice()), Integer.toString(quantity));
+		
+		StringBuilder aux = new StringBuilder("{ \"quantity\": \"%s\",");
+		
+		aux.append("\"item\": {"
+				+ "\"id\": \"%s\", "
+				+ "\"name\": \"%s\", "
+				+ "\"price\": \"%s\""
+				+ "}");
+		
+		aux.append("}");
+		
+		return String.format(aux.toString(), Integer.toString(quantity), item.getId(), item.getName(), Double.toString(item.getPrice()));
 	}
 
 	@Override
