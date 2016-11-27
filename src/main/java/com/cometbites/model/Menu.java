@@ -52,6 +52,6 @@ public class Menu {
 		
 		aux.append("]");
 		
-		return String.format(aux.toString());
+		return aux.toString();
 	}
 }
