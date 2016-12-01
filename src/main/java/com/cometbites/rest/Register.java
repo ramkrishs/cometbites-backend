@@ -21,7 +21,12 @@ import com.cometbites.model.Customer;
 import com.cometbites.model.FoodJoint;
 import com.cometbites.model.Item;
 import com.cometbites.model.Order;
+import com.cometbites.model.Status;
 import com.cometbites.model.Ticket;
+import com.cometbites.util.Util;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import com.mongodb.WriteResult;
 
 @Component
 @Path("register")
@@ -89,7 +94,7 @@ public class Register {
 		Item item = new Item(itemID, name, description, Double.parseDouble(price));
 		
 		order.addItem(item);
-		dBFacade.saveOrder(order);
+		//dBFacade.saveOrder(order);
 
 		return item.getDescription();
 	}
@@ -110,7 +115,7 @@ public class Register {
 		Order order = getOrderByUID(headers.getHeaderString("UID"));
 		
 		order.updateQuantity(new Item(itemID, name, description, Double.parseDouble(price)), Integer.parseInt(quantity));
-		dBFacade.updateOrder(order);
+		dBFacade.saveOrder(order);
 		
 		return Double.toString(order.getTotal());
 	}
@@ -161,6 +166,60 @@ public class Register {
 		return ticket.toString();
 	}
 	
+	/**
+	 * 
+	 * @param paymentOption
+	 * @return
+	 */
+	@POST
+	@Path("/order/eticket")
+	public String generateEticket(@Context HttpHeaders headers) {
+		Ticket ticket = new Ticket();
+		try {
+			
+			DBObject res = new BasicDBObject();
+			res.put("result", 400);
+			
+			Order order = getOrderByUID(headers.getHeaderString("UID"));
+			
+			
+			DBObject query = new BasicDBObject();
+		  	query.put("invoice", order.getInvoice());
+		  	
+		  	DBObject update = new BasicDBObject();
+		  	
+		  	DBObject values = new BasicDBObject("status", Status.PENDING.getValue());
+		  	values.put("date", Util.getCurrentTime());
+			update.put("$set",values);
+			
+			dBFacade.updateOrderDocument(query, update);	
+			
+			ticket.setCode(order.getInvoice());
+			
+			//FIXME when waitTime logic is done
+			ticket.setWaitTime("0");
+			
+			String netid = auth.getCustomerID(headers.getHeaderString("UID"));
+			
+			String phone = dBFacade.getPhonenumberbyNetid(netid);
+			
+			Util.SendSms(phone, "Thanks for choosing Eticket Remember that your order will start preparation once you in the counter");
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return ticket.toString();
+	}
+	
+	
+	
+	
+	/**
+	 * 
+	 * @param customerUID
+	 * @return
+	 */
 	private Order getOrderByUID(String customerUID) {
 		return dBFacade.getNewOrderByCustomerID(auth.getCustomerID(customerUID));
 	}

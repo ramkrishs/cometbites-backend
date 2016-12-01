@@ -7,7 +7,8 @@ public enum Status {
 	READY_FOR_PICKUP("4"),
 	PICKED_UP("5"),
 	DELAYED("6"),
-	EXPIRED("7");
+	EXPIRED("7"),
+	PENDING("8");
 	
 	private final String id;
     Status(String id) { this.id = id; }

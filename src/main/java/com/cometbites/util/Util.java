@@ -32,6 +32,20 @@ public class Util {
 		System.out.println(sms.getSid());	
 		
 	}
+	public static void SendSms(String phoneno, String customMessage) {
+		
+		Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+		
+		String number = "+1" + phoneno;
+		
+		Message sms = Message
+		        .creator(new PhoneNumber(number), new PhoneNumber("+14109819706"),
+		        		customMessage)
+		        .create();
+		
+		System.out.println(sms.getSid());	
+		
+	}
 	
 	public static String generateNewInvoce(int numberOfItems) {
 		Calendar cal = Calendar.getInstance();

@@ -10,14 +10,70 @@ public class User {
     public String firstName;
     public String lastName;
     public String netid;
+    public String phone;
+    public String getId() {
+		return id;
+	}
+
+
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+
+
+	public String getLastName() {
+		return lastName;
+	}
+
+
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+
+
+	public String getNetid() {
+		return netid;
+	}
+
+
+
+	public void setNetid(String netid) {
+		this.netid = netid;
+	}
+
+
+
+	public String getPhone() {
+		return phone;
+	}
+
+
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+
+
+	public User(){}
     
-    public User(){}
-    
-    public User(String firstName,String lastName,String netid){
-    	this.firstName = firstName;
-    	this.lastName = lastName;
-    	this.netid = netid;
-    }
+   
     
     @Override
     public String toString() {

@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.management.Query;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.stereotype.Controller;
 
 import com.cometbites.model.Customer;
@@ -21,6 +24,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.mongodb.WriteResult;
 
 @Controller
 public class DBFacade {
@@ -231,6 +235,41 @@ public class DBFacade {
 		return order;
 	}
 	
+	public String getPhonenumberbyNetid(String netid){
+			User user = null;
+		try {
+			
+			DBObject quer = new BasicDBObject();
+			quer.put("netid", netid);
+			BasicQuery query = new BasicQuery(quer);
+			
+			user = mongoTemplate.findOne(query, User.class);
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return user.getPhone();
+	}
+	
+	public String updateOrderDocument(DBObject query,DBObject update){
+		DBObject res = new BasicDBObject();
+		res.put("result", 400);
+	try {
+		DBCollection ms = mongoTemplate.getCollection("orders");
+		
+		WriteResult result = ms.update(query, update);
+		if(result.wasAcknowledged()){
+			res.put("result", 200);
+		}	
+		
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+	
+	return res.toString();
+}
 	
 	
 	
