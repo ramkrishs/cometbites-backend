@@ -23,7 +23,7 @@ public class Payment {
     	if(option.getString("cvv") == null) {
     		card = new CometCard(Long.parseLong(option.getString("cardno")));
     	} else {
-    		card = new CreditCard(Long.parseLong(option.getString("cardno")), Util.parseExpirationDate(option.getString("expdate")), Integer.parseInt(option.getString("cvv")));
+    		card = new CreditCard(Long.parseLong(option.getString("cardno")), Util.parseDate(option.getString("expdate"), Util.EXP_DATE_FORMAT), Integer.parseInt(option.getString("cvv")));
     	}
     	
     	card.setCardName(option.getString("cardname"));

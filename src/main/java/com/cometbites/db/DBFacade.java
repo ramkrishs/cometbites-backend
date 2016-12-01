@@ -1,7 +1,6 @@
 package com.cometbites.db;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -11,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Controller;
 
+import com.cometbites.model.Customer;
+import com.cometbites.model.FoodJoint;
 import com.cometbites.model.Item;
 import com.cometbites.model.LineItem;
 import com.cometbites.model.Order;
@@ -122,11 +123,12 @@ public class DBFacade {
 		String newInvoice = Util.generateNewInvoce(orders.length());
 		
 		try{
-			document.put("id", order.getId());
+			document.put("netid", order.getCustomer().getId());
 			document.put("status", order.getStatus().getValue());
 			document.put("total", Double.toString(order.getTotal()));
 			document.put("date", Util.getCurrentTime());
 			document.put("invoice", newInvoice);
+			document.put("fjID", order.getFoodJoint().getId());
 
 			List<DBObject> itemObjects = new ArrayList<>();
 			
@@ -154,6 +156,37 @@ public class DBFacade {
 		return newInvoice;
 	}
 	
+	public void updateOrder(Order order) {
+		DBCollection ms = mongoTemplate.getCollection("orders");
+		DBObject query = new BasicDBObject();
+		query.put("invoice", order.getInvoice());
+			
+		DBObject newOrder = new BasicDBObject();
+		
+		newOrder.put("netid", order.getCustomer().getId());
+		newOrder.put("status", order.getStatus().getValue());
+		newOrder.put("total", Double.toString(order.getTotal()));
+		newOrder.put("date", Util.getCurrentTime());
+		newOrder.put("invoice", order.getInvoice());
+		newOrder.put("fjID", order.getFoodJoint().getId());
+		
+		List<DBObject> itemObjects = new ArrayList<>();
+		
+		for (LineItem lineItem : order.getOrderItems()) {
+			DBObject dbItem = new BasicDBObject();
+			
+			dbItem.put("id", lineItem.getItem().getId());
+			dbItem.put("name", lineItem.getItem().getName());
+			dbItem.put("price", Double.toString(lineItem.getItem().getPrice()));
+			dbItem.put("quantity", Integer.toString(lineItem.getQuantity()));
+			
+			itemObjects.add(dbItem);
+		}
+		newOrder.put("items", itemObjects);
+		
+		ms.update(query, newOrder);
+	}
+	
 	public String getOrders() {
 		JSONArray orders = new JSONArray();
 
@@ -174,6 +207,44 @@ public class DBFacade {
 		}
 		
 		return orders.toString();
+	}
+
+	public Order getNewOrderByCustomerID(String customerID) {
+		DBCollection ms = mongoTemplate.getCollection("orders");
+		DBObject query = new BasicDBObject();
+		query.put("netid", customerID);
+		query.put("status", Status.NEW.getValue());
+		DBCursor cursor = ms.find(query);
+		
+		Order order = null;
+		while(cursor.hasNext()) {
+			DBObject userObj =  cursor.next();
+			
+			order = new Order();
+			order.setInvoice(userObj.get("invoice").toString());
+			order.setFoodJoint(new FoodJoint(userObj.get("fjID").toString()));
+			order.setTotal(Double.parseDouble(userObj.get("total").toString()));
+			order.setStatus(Status.NEW);
+			order.setCustomer(new Customer(userObj.get("netid").toString()));
+			order.setDate(Util.parseDate(userObj.get("date").toString(), Util.ORDER_DATE_FORMAT));
+
+			JSONArray orders = new JSONArray(userObj.get("items").toString());
+			
+			for (Object object : orders) {
+				JSONObject itemObj = new JSONObject(object.toString());
+				
+				Item item = new Item();
+				item.setId(itemObj.get("id").toString());
+				item.setName(itemObj.get("name").toString());
+				item.setPrice(Double.parseDouble(itemObj.get("price").toString()));
+				
+				order.addItem(item);
+				order.updateQuantity(item, Integer.parseInt(itemObj.get("quantity").toString()));
+			}
+			
+		}
+		
+		return order;
 	}
 	
 	

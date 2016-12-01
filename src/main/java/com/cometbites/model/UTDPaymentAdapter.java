@@ -11,7 +11,6 @@ public class UTDPaymentAdapter implements IExternalPayment {
 		return instance;
 	}
 
-	// TODO Implement real dummy operations
 	@Override
 	public boolean authorize(long cardNumber) {
 		return true;

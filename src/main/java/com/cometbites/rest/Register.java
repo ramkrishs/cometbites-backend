@@ -1,13 +1,10 @@
 package com.cometbites.rest;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -22,50 +19,20 @@ import com.cometbites.db.DBFacade;
 import com.cometbites.model.Customer;
 import com.cometbites.model.FoodJoint;
 import com.cometbites.model.Item;
-import com.cometbites.model.LineItem;
 import com.cometbites.model.Order;
 import com.cometbites.model.Ticket;
 import com.cometbites.util.Auth;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 
 @Component
 @Path("register")
 @Produces(MediaType.APPLICATION_JSON)
 public class Register {
 	
-	//FIXME info from client and/or login ???
-//	private IDevice currentCustomer;
-	private Customer currentCustomer;
-	private Order currentOrder;
-	
 	@Autowired
 	private DBFacade dBFacade;
 	
 	@Autowired
 	private Auth auth;
-	
-	@GET
-	@Path("/test/{customerID}")
-	public String testOrder(@PathParam("customerID") String customerID,@Context HttpHeaders headers) {
-		
-		auth.isUserExist(headers.getHeaderString("UID"));
-		Map<String, String> map = new HashMap<>();
-		DBObject obj = new BasicDBObject();
-		obj.put("result", "hi sorry");
-		
-		if (headers.getHeaderString("UID") != null ){
-			
-		}
-		else{
-			obj.put("result", "hi sorry");
-		}
-		
-		return obj.toString();
-		
-		
-	}
-	
 	
 	/**
 	 * Get All FoodJoints to the customer 
@@ -74,20 +41,15 @@ public class Register {
 	 */
 	@GET
 	@Path("/{customerID}")
-	public String startOrder(@PathParam("customerID") String customerID,@Context HttpHeaders headers) {
-		
+	public String startOrder(@PathParam("customerID") String customerID, @Context HttpHeaders headers) {
 		if (headers.getHeaderString("UID") != null ){
 			if(!auth.isUserExist(headers.getHeaderString("UID"))){
 				auth.setCustomerID(headers.getHeaderString("UID"), customerID);
 			}
 		}
 		
-		
-		
 		return dBFacade.getFoodJoints();
 	}
-	
-	
 	
 	/**
 	 * Get Individual FoodJoint by id 
@@ -95,16 +57,15 @@ public class Register {
 	 * @return
 	 */
 	@GET
-	@Path("/foodJoint/{foodJointID}")
+	@Path("/foodjoint/{foodJointID}")
 	public String selectFoodJoint(@PathParam("foodJointID") String foodJointID) {
-		
+
 		List<Item> itemList = dBFacade.getMenu(foodJointID);
 		
 		FoodJoint foodJoint = new FoodJoint(itemList);
 		
 		return foodJoint.getMenu().toString();
 	}
-	
 	
 	/**
 	 * Create a Order for user and send him item Description
@@ -116,16 +77,20 @@ public class Register {
 	 */
 	@POST
 	@Path("/select/{itemID}")
-	public String selectItem(@PathParam("itemID") String itemID,  @FormParam("name") String name, @FormParam("description") String description,  @FormParam("price") String price) {
+	public String selectItem(@PathParam("itemID") String itemID,  @FormParam("name") String name, @FormParam("description") String description,  @FormParam("price") String price, @FormParam("fjID") String fjID, @Context HttpHeaders headers) {
+		Order order = getOrderByUID(headers.getHeaderString("UID"));
 		
-		if(currentOrder == null) {
-			currentOrder = new Order();
-			currentOrder.setCustomer(currentCustomer);
+		if(order == null) {
+			order = new Order();
+			order.setCustomer(new Customer(auth.getCustomerID(headers.getHeaderString("UID"))));
+			order.setFoodJoint(new FoodJoint(fjID));
 		}
 		
 		Item item = new Item(itemID, name, description, Double.parseDouble(price));
-		currentOrder.addItem(item);
 		
+		order.addItem(item);
+		dBFacade.saveOrder(order);
+
 		return item.getDescription();
 	}
 	
@@ -141,22 +106,14 @@ public class Register {
 	@POST
 	@Path("/addquantity/{itemID}")
 	public String informQuantity(@PathParam("itemID") String itemID,  @FormParam("name") String name, 
-			@FormParam("description") String description, @FormParam("price") String price, @FormParam("quantity") String quantity) {
+			@FormParam("description") String description, @FormParam("price") String price, @FormParam("quantity") String quantity, @Context HttpHeaders headers) {
+		Order order = getOrderByUID(headers.getHeaderString("UID"));
 		
-		currentOrder.updateQuantity(new Item(itemID, name, description, Double.parseDouble(price)), Integer.parseInt(quantity));
+		order.updateQuantity(new Item(itemID, name, description, Double.parseDouble(price)), Integer.parseInt(quantity));
+		dBFacade.updateOrder(order);
 		
-		System.out.println("QUANTITY INFORMED: "+quantity);
-		
-		System.out.println(currentCustomer.getId());
-		
-		for (LineItem item : currentOrder.getOrderItems()) {
-			System.out.println("LINE ITEM: "+item.getItem().getName()+" x"+item.getQuantity());
-		}
-		System.out.println();
-		
-		return Double.toString(currentOrder.getTotal());
+		return Double.toString(order.getTotal());
 	}
-	
 	
 	/**
 	 * View current order
@@ -165,8 +122,10 @@ public class Register {
 	 */
 	@GET
 	@Path("/order")
-	public String viewOrder() {
-		return currentOrder.getOrderItems().toString();
+	public String viewOrder(@Context HttpHeaders headers) {
+		Order order = getOrderByUID(headers.getHeaderString("UID"));
+		
+		return order.getOrderItems().toString();
 	}
 	
 	/**
@@ -178,7 +137,7 @@ public class Register {
 	@Path("/checkout")
 	public String checkOut(@Context HttpHeaders headers) {
 		if(headers.getHeaderString("UID")!=null){
-			return dBFacade.getPaymentOptions(headers.getHeaderString("UID"));
+			return dBFacade.getPaymentOptions(auth.getCustomerID(headers.getHeaderString("UID")));
 		}
 		return "{\"result\":\"500\"}";
 	}
@@ -190,18 +149,21 @@ public class Register {
 	 */
 	@POST
 	@Path("/order/payment")
-	public String makePayment(@FormParam("option") String paymentOption) {
+	public String makePayment(@FormParam("option") String paymentOption, @Context HttpHeaders headers) {
+		Order order = getOrderByUID(headers.getHeaderString("UID"));
 		
-		Ticket ticket = currentOrder.concludeOrder(paymentOption);
+		Ticket ticket = order.concludeOrder(paymentOption);
 		
-		String code = dBFacade.saveOrder(currentOrder);
+		String code = dBFacade.saveOrder(order);
 		
-		currentOrder.setId(code);
 		ticket.setCode(code);
+		order.setInvoice(code);
 		
 		return ticket.toString();
 	}
 	
-	
+	private Order getOrderByUID(String customerUID) {
+		return dBFacade.getNewOrderByCustomerID(auth.getCustomerID(customerUID));
+	}
 	
 }

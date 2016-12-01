@@ -14,11 +14,11 @@ public class FoodJoint {
     private Menu menu;
 
     public FoodJoint() {}
-
-    public FoodJoint(String name) {
-        this.name = name;
-    }
     
+    public FoodJoint(String id) {
+        this.id = id;
+    }
+
     public FoodJoint(List<Item> itemList) {
     	Menu menu = new Menu();
     	menu.setItems(itemList);

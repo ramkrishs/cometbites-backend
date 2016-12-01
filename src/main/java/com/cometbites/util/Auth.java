@@ -8,13 +8,8 @@ import java.util.Map;
 import org.springframework.stereotype.Controller;
 
 import com.cometbites.model.Customer;
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseToken;
-import com.google.firebase.tasks.OnFailureListener;
-import com.google.firebase.tasks.OnSuccessListener;
-import com.google.firebase.tasks.Task;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 
 @Controller
 public class Auth {

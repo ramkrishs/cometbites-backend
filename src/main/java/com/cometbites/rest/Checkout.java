@@ -5,8 +5,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.braintreegateway.BraintreeGateway;
@@ -16,7 +14,7 @@ import com.braintreegateway.Environment;
 @Path("pay")
 @Produces(MediaType.APPLICATION_JSON)
 public class Checkout {
-	private static Logger log = LogManager.getLogger();
+
 	private static BraintreeGateway gateway = new BraintreeGateway(
 			  Environment.SANDBOX,
 			  "4pnfw7bk3cwpygw8",
@@ -33,8 +31,7 @@ public class Checkout {
 		try{
 			token = gateway.clientToken().generate();
 		}catch (Exception e) {
-			// TODO: handle exception
-			System.out.println("Exception " + e);
+			e.printStackTrace();
 		}
 		 
 		return token;

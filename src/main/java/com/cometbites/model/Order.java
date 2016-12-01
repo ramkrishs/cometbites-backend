@@ -7,12 +7,14 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
+import org.springframework.stereotype.Controller;
 
 import com.cometbites.db.DBFacade;
 
+@Controller
 public class Order {
 	@Id
-	public String id;
+	public String invoice;
 	
 	private Status status;
 	private double total;
@@ -20,9 +22,7 @@ public class Order {
 	private Map<String, LineItem> orderItems;
 	
 	private Customer customer;
-	//phoneNumber
-	//Customer
-	//foodJoint
+	private FoodJoint foodJoint;
 	
 	@Autowired
 	private DBFacade dBFacade;
@@ -30,8 +30,6 @@ public class Order {
 	public Order() {
 		orderItems = new HashMap<String, LineItem>();
 		status = Status.NEW;
-		
-		
 	}
 	
 	public void addItem(Item item) {
@@ -63,12 +61,12 @@ public class Order {
 		}
 	}
 
-	public String getId() {
-		return id;
+	public String getInvoice() {
+		return invoice;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setInvoice(String invoice) {
+		this.invoice = invoice;
 	}
 
 	public Status getStatus() {
@@ -94,10 +92,18 @@ public class Order {
 	public void setDate(Date date) {
 		this.date = date;
 	}
+	
+	public FoodJoint getFoodJoint() {
+		return foodJoint;
+	}
+
+	public void setFoodJoint(FoodJoint foodJoint) {
+		this.foodJoint = foodJoint;
+	}
 
 	@Override
 	public String toString() {
-		return String.format("Menu[id=%s]", id);
+		return String.format("Menu[id=%s]", invoice);
 	}
 
 	public Collection<LineItem> getOrderItems() {
@@ -124,13 +130,15 @@ public class Order {
 			UTDPaymentAdapter.getInstance().charge(cardNumber, payment.getAmount());
 		}
 		
-		//TODO giving null for db
-//		dBFacade.saveTransaction(payment);
+		//FIXME test if dBFacade is still null
+		dBFacade.saveTransaction(payment);
 		
 		updateStatus();
-		calculateWaitTime();
+		
+		String waitTime = calculateWaitTime();
 		
 		Ticket ticket = new Ticket();
+		ticket.setWaitTime(waitTime);
 		
 		return ticket;
 	}
@@ -139,8 +147,9 @@ public class Order {
 		status = Status.IN_PREPARATION;
 	}
 
-	private void calculateWaitTime() {
-		// TODO Auto-generated method stub
+	private String calculateWaitTime() {
+		// TODO implement
+		return "";
 	}
 	
 }

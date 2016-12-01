@@ -57,11 +57,10 @@ public class Customer {
 		this.phoneNumber = phoneNumber;
 	}
 
-	//TODO implement tostring
 	@Override
     public String toString() {
-		StringBuilder aux = new StringBuilder("{ \"code\": \"%s\" }");
-		return String.format(aux.toString());
+		StringBuilder aux = new StringBuilder("{ \"netid\": \"%s\", \"phoneNumber\": \"%s\" }");
+		return String.format(aux.toString(), id, Integer.toString(phoneNumber));
     }
 
 }

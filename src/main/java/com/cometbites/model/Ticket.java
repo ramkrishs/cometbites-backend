@@ -9,6 +9,7 @@ public class Ticket {
     public String id;
 
     private String code;
+    private String waitTime;
 
     public Ticket() {}
     
@@ -33,11 +34,19 @@ public class Ticket {
 	public void setCode(String code2) {
 		this.code = code2;
 	}
+	
+	public String getWaitTime() {
+		return waitTime;
+	}
+
+	public void setWaitTime(String waitTime) {
+		this.waitTime = waitTime;
+	}
 
 	@Override
     public String toString() {
-		StringBuilder aux = new StringBuilder("{ \"code\": \"%s\" }");
-		return String.format(aux.toString(), code);
+		StringBuilder aux = new StringBuilder("{ \"code\": \"%s\", \"waittime\": \"%s\" }");
+		return String.format(aux.toString(), code, waitTime);
     }
 
 }

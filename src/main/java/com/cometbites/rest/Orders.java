@@ -1,7 +1,6 @@
 package com.cometbites.rest;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -228,62 +227,6 @@ public class Orders {
 		}
 		
 		return waitTime;
-	}
-	
-	
-	//TODO ADD ITEM (UNUSED)
-	//FIXME NOT FINISHED
-	@POST
-	@Path("/{invoice}")
-	@Consumes("application/x-www-form-urlencoded")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String addItemToOrder(@PathParam("invoice") String invoice, @FormParam("item") String itemName, @FormParam("quantity") String quantity, 
-			@Context HttpHeaders header, @Context HttpServletResponse response) throws Exception {
-		
-		try{
-			JSONObject order = new JSONObject(getOrderByInvoice(invoice));
-			JSONArray items = new JSONArray(order.get("items").toString());
-			
-			int newQty = Integer.parseInt(quantity);
-			
-			Iterator<Object> itemIterator = items.iterator();
-			
-			boolean exists = false;
-			while(itemIterator.hasNext()) {
-				JSONObject item = (JSONObject) itemIterator.next();
-				
-				if (item.get("name").equals(itemName)) {
-					exists = true;
-					
-					int oldQty = Integer.parseInt(item.get("quantity").toString());
-					
-					item.put("quantity", Integer.toString(oldQty + newQty));
-					break;
-				}
-			}
-			
-			if(!exists) {
-				JSONObject newItem = new JSONObject();
-				
-				newItem.put("name", itemName);
-				newItem.put("quantity", quantity);
-				
-				items.put(newItem);
-			}
-			
-			//FIXME UPDATE ON DB
-//			DBCollection ms = mongoTemplate.getCollection("orders");
-			
-//			WriteResult result = ms.update(query, value);
-			
-			return order.toString();
-			
-		}
-		catch(Exception e){
-			System.out.println("error?");
-		}
-		
-		return "401";
 	}
 	
 	

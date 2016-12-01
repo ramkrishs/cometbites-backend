@@ -6,6 +6,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.context.annotation.Configuration;
 
 import com.cometbites.db.DBFacade;
+import com.cometbites.model.Order;
 import com.cometbites.rest.Checkout;
 import com.cometbites.rest.FoodJoints;
 import com.cometbites.rest.HelloWorld;
