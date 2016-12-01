@@ -5,15 +5,23 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.Id;
-import org.springframework.stereotype.Controller;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.stereotype.Component;
 
-import com.cometbites.db.DBFacade;
+import com.cometbites.util.Util;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 
-@Controller
+@Component
 public class Order {
-	@Id
+
 	public String invoice;
 	
 	private Status status;
@@ -25,7 +33,7 @@ public class Order {
 	private FoodJoint foodJoint;
 	
 	@Autowired
-	private DBFacade dBFacade;
+	private MongoTemplate mongoTemplate;
 	
 	public Order() {
 		orderItems = new HashMap<String, LineItem>();
@@ -130,8 +138,7 @@ public class Order {
 			UTDPaymentAdapter.getInstance().charge(cardNumber, payment.getAmount());
 		}
 		
-		//FIXME test if dBFacade is still null
-		dBFacade.saveTransaction(payment);
+		saveTransaction(payment, this);
 		
 		updateStatus();
 		
@@ -148,8 +155,43 @@ public class Order {
 	}
 
 	private String calculateWaitTime() {
-		// TODO implement
+		/*
+		wait_time: "1.5",
+		chef_total: "2",
+		chef_efficiency: "0.5",
+		helper_total: "1",
+		helper_efficiency: "0.25",
+		delay_time: "1"
+		 */
+		
 		return "";
 	}
 	
+//	public float getOrderWaitTime(int foodJointID) {
+//		JSONArray orders = new JSONArray(getOrders());
+//		int numberOfOrders = orders.length();
+//		System.out.println(numberOfOrders);
+//		float waitTime = getFoodJointWaitTime(foodJointID);
+//		
+//		float orderWaitTime = waitTime + waitTime*numberOfOrders;
+//		
+//		return orderWaitTime;
+//	}
+	
+	public void saveTransaction(Payment payment, Order order) {
+		DBObject document = new BasicDBObject();
+
+		try{
+			document.put("invoice", order.getInvoice());
+			document.put("netid", order.getCustomer().getId());
+			document.put("amount", payment.getAmount());
+			document.put("cardNo", payment.getCard().getNumber());
+			document.put("date", Util.getCurrentTime());
+			
+			DBCollection ms = mongoTemplate.getCollection("transactions");
+			ms.insert(document);
+		}
+		catch(Exception e){
+		}
+	}
 }

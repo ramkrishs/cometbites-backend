@@ -15,7 +15,6 @@ import com.cometbites.model.FoodJoint;
 import com.cometbites.model.Item;
 import com.cometbites.model.LineItem;
 import com.cometbites.model.Order;
-import com.cometbites.model.Payment;
 import com.cometbites.model.Status;
 import com.cometbites.util.Util;
 import com.mongodb.BasicDBObject;
@@ -99,21 +98,6 @@ public class DBFacade {
 		}
 		
 		return paymentOptions.get(0).toString();
-	}
-
-	public void saveTransaction(Payment payment) {
-		DBObject document = new BasicDBObject();
-
-		try{
-			document.put("amount", payment.getAmount());
-			document.put("cardNo", payment.getCard().getNumber());
-			document.put("date", Util.getCurrentTime());
-			
-			DBCollection ms = mongoTemplate.getCollection("transactions");
-			ms.insert(document);
-		}
-		catch(Exception e){
-		}
 	}
 
 	public String saveOrder(Order order) {

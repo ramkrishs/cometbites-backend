@@ -154,10 +154,9 @@ public class Register {
 		
 		Ticket ticket = order.concludeOrder(paymentOption);
 		
-		String code = dBFacade.saveOrder(order);
+		dBFacade.updateOrder(order);
 		
-		ticket.setCode(code);
-		order.setInvoice(code);
+		ticket.setCode(order.getInvoice());
 		
 		return ticket.toString();
 	}

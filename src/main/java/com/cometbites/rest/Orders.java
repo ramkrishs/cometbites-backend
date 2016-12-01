@@ -198,20 +198,6 @@ public class Orders {
 		return res.toString();
 	}
 	
-	//TODO transform this into a service and test
-	@GET
-	@Path("/{id}/wait_time")
-	public float getOrderWaitTime(@PathParam("id") int foodJointID) {
-		JSONArray orders = new JSONArray(getOrders());
-		int numberOfOrders = orders.length();
-		System.out.println(numberOfOrders);
-		float waitTime = getFoodJointWaitTime(foodJointID);
-		
-		float orderWaitTime = waitTime + waitTime*numberOfOrders;
-		
-		return orderWaitTime;
-	}
-	
 	public float getFoodJointWaitTime(int id) {
 		DBCollection ms = mongoTemplate.getCollection("foodjoints");
 		DBObject query = new BasicDBObject();
@@ -227,6 +213,13 @@ public class Orders {
 		}
 		
 		return waitTime;
+	}
+	
+	//TODO implement method
+	@GET
+	@Path("/update/{invoice}")
+	public void updateStatus() {
+		
 	}
 	
 	
