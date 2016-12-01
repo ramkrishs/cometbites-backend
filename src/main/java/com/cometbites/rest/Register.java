@@ -15,13 +15,13 @@ import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.cometbites.db.Auth;
 import com.cometbites.db.DBFacade;
 import com.cometbites.model.Customer;
 import com.cometbites.model.FoodJoint;
 import com.cometbites.model.Item;
 import com.cometbites.model.Order;
 import com.cometbites.model.Ticket;
-import com.cometbites.util.Auth;
 
 @Component
 @Path("register")

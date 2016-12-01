@@ -1,4 +1,4 @@
-package com.cometbites.util;
+package com.cometbites.db;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -20,28 +20,11 @@ public class Auth {
 			
 	public Auth() throws FileNotFoundException {
 		customerList = new HashMap<>();
-		options = new FirebaseOptions.Builder()
-				  .setServiceAccount(new FileInputStream("src/main/resources/privatekey.json"))
-				  .setDatabaseUrl("https://cometbites.firebaseio.com/")
-				  .build();
-		fbApp = FirebaseApp.initializeApp(options);
+		
 
 	}
 	
 	public boolean isUserExist(String uid){
-//		String token;
-//		FirebaseAuth auth = FirebaseAuth.getInstance(fbApp);
-//		auth.createCustomToken(uid)
-//		.addOnSuccessListener(new OnSuccessListener<String>() {
-//	        @Override
-//	        public void onSuccess(String customToken) {
-//	            System.out.println(customToken);
-//	            token = customToken;
-//	        }
-//		});
-		
-        
-		
 		return customerList.containsKey(uid);
 	}
 	

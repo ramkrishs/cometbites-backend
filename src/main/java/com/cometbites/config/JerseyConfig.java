@@ -30,6 +30,7 @@ public class JerseyConfig extends ResourceConfig {
 		register(Orders.class);
 		register(Token.class);
 		register(Register.class);
+		
 	}
 
 }
