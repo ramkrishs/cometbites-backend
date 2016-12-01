@@ -176,36 +176,7 @@ public class DBFacade {
 		return orders.toString();
 	}
 	
-	public void createOrderStatus() {
-		DBCollection coll = mongoTemplate.getCollection("cappedOrders");
-
-		Date now = new Date();
-		
-		BasicDBObject timeNow = new BasicDBObject("create_date", now);
-		timeNow.put("phone", "4697203472");
-		timeNow.put("ord_id", "rxs101010");
-		timeNow.put("order_status", "new");
-		
-		
-		coll.insert(timeNow);
-		
-	}
 	
-	public void updateOrderStatus() {
-		DBCollection ms = mongoTemplate.getCollection("cappedOrders");
-
-		BasicDBObject timeNow = new BasicDBObject("create_date", new Date());
-		timeNow.put("order_status", "2");
-		System.out.println(Status.IN_PREPARATION.getValue());
-		
-		DBObject value = new BasicDBObject();
-		value.put("$set", timeNow);
-		
-		DBObject query = new BasicDBObject();
-		query.put("ord_id", "rxp11");
-		
-		ms.update(query, value);
-	}
 	
 	
 
