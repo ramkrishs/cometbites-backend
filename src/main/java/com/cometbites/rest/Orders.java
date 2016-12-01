@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
+import com.cometbites.model.Status;
 import com.cometbites.util.Util;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
@@ -217,8 +218,63 @@ public class Orders {
 	
 	//TODO implement method
 	@GET
-	@Path("/update/{invoice}")
-	public void updateStatus() {
+	@Path("/update/kitchen/{invoice}")
+	public String updateStatus(@PathParam("invoice") String invoice) {
+		
+		DBObject res = new BasicDBObject();
+		res.put("result", 400);
+		try {
+			
+			DBCollection ms = mongoTemplate.getCollection("orders");
+		  	DBObject query = new BasicDBObject();
+		  	query.put("invoice", invoice);
+		  	
+		  	DBObject update = new BasicDBObject();
+		  	DBObject values = new BasicDBObject("status", Status.PREPARED.getValue());
+		  	values.put("date", Util.getCurrentTime());
+			update.put("$set",values);
+			
+			WriteResult result = ms.update(query, update);
+			if(result.wasAcknowledged()){
+				res.put("result", 200);
+			}
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return res.toString();
+	}
+	
+	@GET
+	@Path("/update/pickup/{invoice}")
+	public String completeOrder(@PathParam("invoice") String invoice) {
+		
+		DBObject res = new BasicDBObject();
+		res.put("result", 400);
+		try {
+			
+			DBCollection ms = mongoTemplate.getCollection("orders");
+		  	DBObject query = new BasicDBObject();
+		  	query.put("invoice", invoice);
+		  	
+		  	DBObject update = new BasicDBObject();
+		  	
+		  	DBObject values = new BasicDBObject("status", Status.READY_FOR_PICKUP.getValue());
+		  	values.put("date", Util.getCurrentTime());
+			update.put("$set",values);
+			
+			WriteResult result = ms.update(query, update);
+			if(result.wasAcknowledged()){
+				res.put("result", 200);
+			}
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return res.toString();
 		
 	}
 	
