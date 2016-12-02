@@ -28,129 +28,129 @@ import com.mongodb.WriteResult;
 @Path("users")
 @Produces(MediaType.APPLICATION_JSON)
 public class Users {
-	
+
 	@Autowired
 	private MongoTemplate mongoTemplate;
 
 	@GET
 	@Path("/{netid}")
 	public String getProfile(@PathParam("netid") String netid) {
-		
+
 		DBCollection ms = mongoTemplate.getCollection("users");
 		JSONArray users = new JSONArray();
 		DBObject query = new BasicDBObject();
-		query.put("netid",netid);
+		query.put("netid", netid);
 		DBCursor cursor = ms.find(query);
-		
-		while(cursor.hasNext()) {
+
+		while (cursor.hasNext()) {
 			JSONObject user = new JSONObject();
-			DBObject userObj =  cursor.next();
+			DBObject userObj = cursor.next();
 			user.put("netid", userObj.get("netid"));
 			user.put("firstname", userObj.get("firstname"));
 			user.put("lastname", userObj.get("lastname"));
 			user.put("emailid", userObj.get("emailid"));
-			
+
 			users.put(user);
 		}
-		
+
 		return users.toString();
 	}
-	
+
 	@GET
 	@Path("/{netid}/payment")
 	public String getPayment(@PathParam("netid") String netid) {
-		
+
 		DBCollection ms = mongoTemplate.getCollection("users");
 		JSONArray users = new JSONArray();
 		DBObject query = new BasicDBObject();
-		query.put("netid",netid);
+		query.put("netid", netid);
 		DBCursor cursor = ms.find(query);
-		
+
 		DBObject res = new BasicDBObject();
 		res.put("result", "Resource not found");
-		
-		while(cursor.hasNext()) {
-			DBObject userObj =  cursor.next();
+
+		while (cursor.hasNext()) {
+			DBObject userObj = cursor.next();
 			users.put(userObj.get("paymentoptions"));
 		}
-		
-		if(users.length() > 0){
+
+		if (users.length() > 0) {
 			return users.get(0).toString();
 		}
-		
+
 		return res.toString();
 	}
-	
+
 	@POST
 	@Path("/{netid}/payment")
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String addPaymentOption(@PathParam("netid") String netid, @FormParam("cardname") String cardname, @FormParam("cardno") String cardno, @FormParam("cvv") String cvv,
-			@FormParam("expdate") String expdate, @Context HttpHeaders header, @Context HttpServletResponse response) throws Exception {
-		
+	public String addPaymentOption(@PathParam("netid") String netid, @FormParam("cardname") String cardname,
+			@FormParam("cardno") String cardno, @FormParam("cvv") String cvv, @FormParam("expdate") String expdate,
+			@Context HttpHeaders header, @Context HttpServletResponse response) throws Exception {
+
 		DBObject document = new BasicDBObject();
 		DBObject res = new BasicDBObject();
 		res.put("result", 401);
-		
-		try{
+
+		try {
 			document.put("cardname", cardname);
 			document.put("cardno", cardno);
-			
-			if(cvv != null && !"".equals(cvv)) {
+
+			if (cvv != null && !"".equals(cvv)) {
 				document.put("cvv", cvv);
 				document.put("expdate", expdate);
 			}
-			
+
 			DBCollection ms = mongoTemplate.getCollection("users");
 
 			DBObject query = new BasicDBObject();
-			query.put("netid",netid);
-			
+			query.put("netid", netid);
+
 			DBObject value = new BasicDBObject();
 			DBObject newOption = new BasicDBObject();
-			
+
 			newOption.put("paymentoptions", document);
 			value.put("$push", newOption);
-			
+
 			WriteResult result = ms.update(query, value);
-			
-			if(result.wasAcknowledged()){
+
+			if (result.wasAcknowledged()) {
 				res.put("result", 200);
 			}
+		} catch (Exception e) {
 		}
-		catch(Exception e){
-		}
-		
+
 		return res.toString();
 	}
-	
+
 	@POST
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String saveUser(@FormParam("firstname") String firstname, @FormParam("lastname") String lastname, @FormParam("netid") String netid,
-			@FormParam("emailid") String emailid,@FormParam("phone") String phone, @Context HttpHeaders header, @Context HttpServletResponse response) throws Exception {
-		
+	public String saveUser(@FormParam("firstname") String firstname, @FormParam("lastname") String lastname,
+			@FormParam("netid") String netid, @FormParam("emailid") String emailid, @FormParam("phone") String phone,
+			@Context HttpHeaders header, @Context HttpServletResponse response) throws Exception {
+
 		DBObject document = new BasicDBObject();
 		DBObject res = new BasicDBObject();
 		res.put("result", 401);
-		try{
+		try {
 			document.put("firstname", firstname);
 			document.put("lastname", lastname);
 			document.put("netid", netid);
 			document.put("emailid", emailid);
 			document.put("phone", phone);
 			DBCollection ms = mongoTemplate.getCollection("users");
-			
-			//insert
+
+			// insert
 			WriteResult result = ms.insert(document);
-			
-			if(result.wasAcknowledged()){
+
+			if (result.wasAcknowledged()) {
 				res.put("result", 200);
 			}
+		} catch (Exception e) {
 		}
-		catch(Exception e){
-		}
-		
+
 		return res.toString();
 	}
 

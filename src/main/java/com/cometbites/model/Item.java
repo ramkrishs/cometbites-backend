@@ -13,7 +13,7 @@ public class Item {
 
 	public Item() {
 	}
-	
+
 	public Item(String id) {
 		this.id = id;
 	}
@@ -23,7 +23,7 @@ public class Item {
 		this.description = description;
 		this.price = price;
 	}
-	
+
 	public Item(String id, String name, String description, double price) {
 		this.id = id;
 		this.name = name;
@@ -73,7 +73,8 @@ public class Item {
 
 	@Override
 	public String toString() {
-		StringBuilder aux = new StringBuilder("{ \"id\": \"%s\", \"name\": \"%s\", \"description\": \"%s\", \"price\": \"%s\", \"image\": \"%s\" }");
+		StringBuilder aux = new StringBuilder(
+				"{ \"id\": \"%s\", \"name\": \"%s\", \"description\": \"%s\", \"price\": \"%s\", \"image\": \"%s\" }");
 		return String.format(aux.toString(), id, name, description, Double.toString(price), image);
 	}
 }

@@ -28,20 +28,20 @@ import com.mongodb.WriteResult;
 @Path("transactions")
 @Produces(MediaType.APPLICATION_JSON)
 public class Transactions {
-	
+
 	@Autowired
 	private MongoTemplate mongoTemplate;
-	
+
 	@GET
 	public String getTransactions() {
 		JSONArray transactions = new JSONArray();
 
 		DBCollection ms = mongoTemplate.getCollection("transactions");
 		DBCursor cursor = ms.find();
-		
-		while(cursor.hasNext()) {
+
+		while (cursor.hasNext()) {
 			JSONObject transaction = new JSONObject();
-			DBObject userObj =  cursor.next();
+			DBObject userObj = cursor.next();
 			transaction.put("netid", userObj.get("netid"));
 			transaction.put("fjID", userObj.get("fjID"));
 			transaction.put("amount", userObj.get("amount"));
@@ -50,23 +50,23 @@ public class Transactions {
 			transaction.put("invoice", userObj.get("invoice"));
 			transactions.put(transaction);
 		}
-		
+
 		return transactions.toString();
 	}
-	
+
 	@GET
 	@Path("/user/{netid}")
 	public String getTransactionByNetID(@PathParam("netid") String netid) {
-		
+
 		DBCollection ms = mongoTemplate.getCollection("transactions");
 		JSONArray transactions = new JSONArray();
 		DBObject query = new BasicDBObject();
-		query.put("netid",netid);
+		query.put("netid", netid);
 		DBCursor cursor = ms.find(query);
-		
-		while(cursor.hasNext()) {
+
+		while (cursor.hasNext()) {
 			JSONObject transaction = new JSONObject();
-			DBObject userObj =  cursor.next();
+			DBObject userObj = cursor.next();
 			transaction.put("netid", userObj.get("netid"));
 			transaction.put("fjID", userObj.get("fjID"));
 			transaction.put("amount", userObj.get("amount"));
@@ -75,23 +75,23 @@ public class Transactions {
 			transaction.put("invoice", userObj.get("invoice"));
 			transactions.put(transaction);
 		}
-		
+
 		return transactions.toString();
 	}
-	
+
 	@GET
 	@Path("/foodjoint/{fjID}")
 	public String getTransactionByFoodJointID(@PathParam("fjID") String fjID) {
-		
+
 		DBCollection ms = mongoTemplate.getCollection("transactions");
 		JSONArray transactions = new JSONArray();
 		DBObject query = new BasicDBObject();
-		query.put("fjID",fjID);
+		query.put("fjID", fjID);
 		DBCursor cursor = ms.find(query);
-		
-		while(cursor.hasNext()) {
+
+		while (cursor.hasNext()) {
 			JSONObject transaction = new JSONObject();
-			DBObject userObj =  cursor.next();
+			DBObject userObj = cursor.next();
 			transaction.put("netid", userObj.get("netid"));
 			transaction.put("fjID", userObj.get("fjID"));
 			transaction.put("amount", userObj.get("amount"));
@@ -100,21 +100,22 @@ public class Transactions {
 			transaction.put("invoice", userObj.get("invoice"));
 			transactions.put(transaction);
 		}
-		
+
 		return transactions.toString();
 	}
-	
+
 	@POST
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String saveTransaction(@FormParam("fjID") String fjID, @FormParam("amount") String amount, @FormParam("netid") String netid,
-			@FormParam("cardNo") String cardNo, @FormParam("date") String date, @FormParam("invoice") String invoice, 
-			@Context HttpHeaders header, @Context HttpServletResponse response) throws Exception {
-		
+	public String saveTransaction(@FormParam("fjID") String fjID, @FormParam("amount") String amount,
+			@FormParam("netid") String netid, @FormParam("cardNo") String cardNo, @FormParam("date") String date,
+			@FormParam("invoice") String invoice, @Context HttpHeaders header, @Context HttpServletResponse response)
+			throws Exception {
+
 		DBObject document = new BasicDBObject();
 		DBObject res = new BasicDBObject();
 		res.put("result", 401);
-		try{
+		try {
 			document.put("fjID", fjID);
 			document.put("amount", amount);
 			document.put("netid", netid);
@@ -122,16 +123,15 @@ public class Transactions {
 			document.put("date", date);
 			document.put("invoice", invoice);
 			DBCollection ms = mongoTemplate.getCollection("transactions");
-			//insert
+			// insert
 			WriteResult result = ms.insert(document);
-			
-			if(result.wasAcknowledged()){
+
+			if (result.wasAcknowledged()) {
 				res.put("result", 200);
 			}
+		} catch (Exception e) {
 		}
-		catch(Exception e){
-		}
-		
+
 		return res.toString();
 	}
 

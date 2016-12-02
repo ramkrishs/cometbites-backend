@@ -42,18 +42,15 @@ public class LineItem {
 
 	@Override
 	public String toString() {
-		
+
 		StringBuilder aux = new StringBuilder("{ \"quantity\": \"%s\",");
-		
-		aux.append("\"item\": {"
-				+ "\"id\": \"%s\", "
-				+ "\"name\": \"%s\", "
-				+ "\"price\": \"%s\""
-				+ "}");
-		
+
+		aux.append("\"item\": {" + "\"id\": \"%s\", " + "\"name\": \"%s\", " + "\"price\": \"%s\"" + "}");
+
 		aux.append("}");
-		
-		return String.format(aux.toString(), Integer.toString(quantity), item.getId(), item.getName(), Double.toString(item.getPrice()));
+
+		return String.format(aux.toString(), Integer.toString(quantity), item.getId(), item.getName(),
+				Double.toString(item.getPrice()));
 	}
 
 	@Override
@@ -66,12 +63,12 @@ public class LineItem {
 
 		if (obj == null)
 			return false;
-		
+
 		if (this.getClass() != obj.getClass())
 			return false;
 
 		LineItem lineItem = (LineItem) obj;
-		
+
 		return getId().equals(lineItem.getId());
 	}
 }

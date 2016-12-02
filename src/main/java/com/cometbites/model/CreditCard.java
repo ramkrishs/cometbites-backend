@@ -4,16 +4,15 @@ import java.util.Date;
 
 import org.springframework.data.annotation.Id;
 
-
 public class CreditCard extends Card {
 
-    @Id
-    public String id;
+	@Id
+	public String id;
 
-    private long cardNumber;
-    private Date expirationDate;
-    private int cvv;
-    
+	private long cardNumber;
+	private Date expirationDate;
+	private int cvv;
+
 	public CreditCard(long cardNumber) {
 		this.cardNumber = cardNumber;
 	}
@@ -23,7 +22,7 @@ public class CreditCard extends Card {
 		this.expirationDate = expirationDate;
 		this.cvv = cvv;
 	}
-	
+
 	public Date getExpirationDate() {
 		return expirationDate;
 	}
@@ -46,10 +45,8 @@ public class CreditCard extends Card {
 	}
 
 	@Override
-    public String toString() {
-        return String.format(
-                "CreditCard[id=%s, utdID='%s']",
-                id, Long.toString(cardNumber));
-    }
+	public String toString() {
+		return String.format("CreditCard[id=%s, utdID='%s']", id, Long.toString(cardNumber));
+	}
 
 }

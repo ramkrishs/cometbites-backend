@@ -15,31 +15,31 @@ import com.mongodb.ServerAddress;
 @Component
 public class DatabaseManager {
 
-    @Bean
-    public MongoDbFactory mongoDbFactory() throws Exception {
+	@Bean
+	public MongoDbFactory mongoDbFactory() throws Exception {
 
-        // Set credentials      
-        MongoCredential credential = MongoCredential.createCredential("root", "cometbites", ("github123").toCharArray());
-        ServerAddress serverAddress = new ServerAddress("candidate.61.mongolayer.com", 11093);
+		// Set credentials
+		MongoCredential credential = MongoCredential.createCredential("root", "cometbites",
+				("github123").toCharArray());
+		ServerAddress serverAddress = new ServerAddress("candidate.61.mongolayer.com", 11093);
 
-        // Mongo Client
-        MongoClient mongoClient = new MongoClient(serverAddress,Arrays.asList(credential)); 
+		// Mongo Client
+		MongoClient mongoClient = new MongoClient(serverAddress, Arrays.asList(credential));
 
-        // Mongo DB Factory
-        SimpleMongoDbFactory simpleMongoDbFactory = new SimpleMongoDbFactory(
-                mongoClient, "cometbites");
+		// Mongo DB Factory
+		SimpleMongoDbFactory simpleMongoDbFactory = new SimpleMongoDbFactory(mongoClient, "cometbites");
 
-        return simpleMongoDbFactory;
-    }
+		return simpleMongoDbFactory;
+	}
 
-    /**
-     * Template ready to use to operate on the database
-     * 
-     * @return Mongo Template ready to use
-     */
-    @Bean
-    public MongoTemplate mongoTemplate() throws Exception {
-        return new MongoTemplate(mongoDbFactory());
-    }
+	/**
+	 * Template ready to use to operate on the database
+	 * 
+	 * @return Mongo Template ready to use
+	 */
+	@Bean
+	public MongoTemplate mongoTemplate() throws Exception {
+		return new MongoTemplate(mongoDbFactory());
+	}
 
 }

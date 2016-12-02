@@ -13,27 +13,26 @@ import com.google.firebase.FirebaseOptions;
 
 @Controller
 public class Auth {
-	
-	Map<String,Customer> customerList;
-	FirebaseOptions options; 
+
+	Map<String, Customer> customerList;
+	FirebaseOptions options;
 	FirebaseApp fbApp;
-			
+
 	public Auth() throws FileNotFoundException {
 		customerList = new HashMap<>();
-		
 
 	}
-	
-	public boolean isUserExist(String uid){
+
+	public boolean isUserExist(String uid) {
 		return customerList.containsKey(uid);
 	}
-	
-	public void setCustomerID(String uid,String customerID){
+
+	public void setCustomerID(String uid, String customerID) {
 		customerList.put(uid, new Customer(customerID));
 	}
-	
-	public String getCustomerID(String uid){
-		
+
+	public String getCustomerID(String uid) {
+
 		return customerList.get(uid).getId();
 	}
 

@@ -28,13 +28,13 @@ public class FoodJoints {
 
 	@GET
 	public String message(@Context HttpHeaders headers) {
-		
+
 		DBCollection ms = mongoTemplate.getCollection("foodjoints");
 		JSONArray foodJoints = new JSONArray();
 		DBCursor cursor = ms.find();
-		while(cursor.hasNext()) {
+		while (cursor.hasNext()) {
 			JSONObject foodJoint = new JSONObject();
-			DBObject foodJointObj =  cursor.next();
+			DBObject foodJointObj = cursor.next();
 			foodJoint.put("name", foodJointObj.get("name"));
 			foodJoint.put("logo", foodJointObj.get("logo"));
 			foodJoint.put("fjID", foodJointObj.get("fjID"));
@@ -43,25 +43,25 @@ public class FoodJoints {
 			foodJoint.put("wait_time", foodJointObj.get("wait_time"));
 			foodJoint.put("menu", foodJointObj.get("menu"));
 			foodJoints.put(foodJoint);
-			
+
 		}
-		
+
 		return foodJoints.toString();
 	}
-	
+
 	@GET
 	@Path("/{id}")
 	public String getFoodJoint(@PathParam("id") String id) {
-		
+
 		DBCollection ms = mongoTemplate.getCollection("foodjoints");
 		JSONArray foodJoints = new JSONArray();
 		DBObject query = new BasicDBObject();
 		query.put("fjID", Integer.parseInt(id));
 		DBCursor cursor = ms.find(query);
-		
-		while(cursor.hasNext()) {
+
+		while (cursor.hasNext()) {
 			JSONObject foodJoint = new JSONObject();
-			DBObject foodJointObj =  cursor.next();
+			DBObject foodJointObj = cursor.next();
 			foodJoint.put("name", foodJointObj.get("name"));
 			foodJoint.put("logo", foodJointObj.get("logo"));
 			foodJoint.put("fjID", foodJointObj.get("fjID"));
@@ -70,61 +70,28 @@ public class FoodJoints {
 			foodJoint.put("wait_time", foodJointObj.get("wait_time"));
 			foodJoint.put("menu", foodJointObj.get("menu"));
 			foodJoints.put(foodJoint);
-			
+
 		}
 
 		return foodJoints.toString();
 	}
-	
+
 	@GET
 	@Path("/{id}/menu")
 	public String getMenu(@PathParam("id") String id) {
-		
+
 		DBCollection ms = mongoTemplate.getCollection("foodjoints");
 		JSONArray foodJointMenu = new JSONArray();
 		DBObject query = new BasicDBObject();
 		query.put("fjID", Integer.parseInt(id));
 		DBCursor cursor = ms.find(query);
-		
-		while(cursor.hasNext()) {
-			DBObject foodJointObj =  cursor.next();
+
+		while (cursor.hasNext()) {
+			DBObject foodJointObj = cursor.next();
 			foodJointMenu.put(foodJointObj.get("menu"));
 		}
-		
+
 		return foodJointMenu.get(0).toString();
 	}
-	
-	public float calculateWaitTime(int id) {
-		DBCollection ms = mongoTemplate.getCollection("foodjoints");
-		DBObject query = new BasicDBObject();
-		query.put("fjID", id);
-		DBCursor cursor = ms.find(query);
-		
-		float chefsEfficiency, helpersEfficiency, delayTime, waitTime = 0;
-		int numberOfChefs, numberOfHelpers;
-		
-		while(cursor.hasNext()) {
-			DBObject foodJointObj =  cursor.next();
-			
-			chefsEfficiency = Float.parseFloat(foodJointObj.get("chef_efficiency").toString());
-			numberOfChefs = Integer.parseInt(foodJointObj.get("chef_total").toString());
-			
-			helpersEfficiency = Float.parseFloat(foodJointObj.get("helper_efficiency").toString());
-			numberOfHelpers = Integer.parseInt(foodJointObj.get("helper_total").toString());
-			
-			delayTime = Float.parseFloat(foodJointObj.get("delay_time").toString());
-			
-			waitTime = (chefsEfficiency/numberOfChefs) + (helpersEfficiency/numberOfHelpers) + delayTime;
-		}
-		
-		DBObject document = new BasicDBObject();
-		document.put("wait_time", Float.toString(waitTime));
-		DBObject value = new BasicDBObject();
-		value.put("$set", document);
-		
-		ms.update(query, value);
-		
-		return waitTime;
-	}
-	
+
 }

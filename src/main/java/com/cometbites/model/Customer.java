@@ -2,18 +2,18 @@ package com.cometbites.model;
 
 import org.springframework.data.annotation.Id;
 
-
 public class Customer {
 
-    @Id
-    public String id;
+	@Id
+	public String id;
 
-    private String firstName;
-    private String lastName;
-    private int phoneNumber;
-    
-    public Customer() {}
-    
+	private String firstName;
+	private String lastName;
+	private int phoneNumber;
+
+	public Customer() {
+	}
+
 	public Customer(String id) {
 		this.id = id;
 	}
@@ -58,9 +58,9 @@ public class Customer {
 	}
 
 	@Override
-    public String toString() {
+	public String toString() {
 		StringBuilder aux = new StringBuilder("{ \"netid\": \"%s\", \"phoneNumber\": \"%s\" }");
 		return String.format(aux.toString(), id, Integer.toString(phoneNumber));
-    }
+	}
 
 }

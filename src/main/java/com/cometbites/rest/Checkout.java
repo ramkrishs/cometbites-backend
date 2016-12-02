@@ -15,27 +15,20 @@ import com.braintreegateway.Environment;
 @Produces(MediaType.APPLICATION_JSON)
 public class Checkout {
 
-	private static BraintreeGateway gateway = new BraintreeGateway(
-			  Environment.SANDBOX,
-			  "4pnfw7bk3cwpygw8",
-			  "y632bwgb8d2ssg77",
-			  "3e5f7f7033cfa2fc91c7025b947f772a"
-			);
-	
-	
+	private static BraintreeGateway gateway = new BraintreeGateway(Environment.SANDBOX, "4pnfw7bk3cwpygw8",
+			"y632bwgb8d2ssg77", "3e5f7f7033cfa2fc91c7025b947f772a");
 
 	@GET
 	@Path("/client_token")
 	public String getClientToken() {
-		String token ="";
-		try{
+		String token = "";
+		try {
 			token = gateway.clientToken().generate();
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		 
+
 		return token;
 	}
-	
-	
+
 }

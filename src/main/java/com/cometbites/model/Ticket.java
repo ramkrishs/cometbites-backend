@@ -2,17 +2,17 @@ package com.cometbites.model;
 
 import org.springframework.data.annotation.Id;
 
-
 public class Ticket {
 
-    @Id
-    public String id;
+	@Id
+	public String id;
 
-    private String code;
-    private String waitTime;
+	private String code;
+	private String waitTime;
 
-    public Ticket() {}
-    
+	public Ticket() {
+	}
+
 	public Ticket(String id, String code) {
 		super();
 		this.id = id;
@@ -34,7 +34,7 @@ public class Ticket {
 	public void setCode(String code2) {
 		this.code = code2;
 	}
-	
+
 	public String getWaitTime() {
 		return waitTime;
 	}
@@ -44,9 +44,9 @@ public class Ticket {
 	}
 
 	@Override
-    public String toString() {
+	public String toString() {
 		StringBuilder aux = new StringBuilder("{ \"code\": \"%s\", \"waittime\": \"%s\" }");
 		return String.format(aux.toString(), code, waitTime);
-    }
+	}
 
 }

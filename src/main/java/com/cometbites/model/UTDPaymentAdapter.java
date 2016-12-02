@@ -3,9 +3,9 @@ package com.cometbites.model;
 public class UTDPaymentAdapter implements IExternalPayment {
 
 	private static UTDPaymentAdapter instance;
-	
+
 	public static synchronized UTDPaymentAdapter getInstance() {
-		if(instance == null) {
+		if (instance == null) {
 			instance = new UTDPaymentAdapter();
 		}
 		return instance;

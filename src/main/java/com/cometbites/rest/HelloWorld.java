@@ -23,22 +23,20 @@ import com.mongodb.DBCursor;
 @Produces(MediaType.APPLICATION_JSON)
 public class HelloWorld {
 	private static Logger log = LogManager.getLogger();
-	
+
 	@Autowired
 	private MongoTemplate mongoTemplate;
 
 	@GET
 	public String message(@Context HttpHeaders headers) {
-		
+
 		DBCollection ms = mongoTemplate.getCollection("users");
 		DBCursor cursor = ms.find();
-		while(cursor.hasNext()) {
-		    System.out.println(cursor.next());
+		while (cursor.hasNext()) {
+			System.out.println(cursor.next());
 		}
 
 		log.info(ms.find().limit(10));
-		
-		
 
 		return "{\"result\": \"Hello CometBites\"}";
 	}

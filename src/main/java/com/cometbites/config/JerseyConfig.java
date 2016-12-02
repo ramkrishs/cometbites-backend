@@ -14,8 +14,6 @@ import com.cometbites.rest.Token;
 import com.cometbites.rest.Transactions;
 import com.cometbites.rest.Users;
 
-
-
 @Configuration
 @ApplicationPath("api/v1/cometbites")
 public class JerseyConfig extends ResourceConfig {
@@ -24,13 +22,13 @@ public class JerseyConfig extends ResourceConfig {
 		register(CorsFilter.class);
 		register(HelloWorld.class);
 		register(FoodJoints.class);
-		register(Users.class);	
+		register(Users.class);
 		register(Checkout.class);
 		register(Transactions.class);
 		register(Orders.class);
 		register(Token.class);
 		register(Register.class);
-		
+
 	}
 
 }

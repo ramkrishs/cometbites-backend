@@ -29,91 +29,86 @@ import com.mongodb.WriteResult;
 @Path("auth")
 @Produces(MediaType.APPLICATION_JSON)
 public class Token {
-	
+
 	@Autowired
 	private MongoTemplate mongoTemplate;
-	
+
 	@GET
 	@Path("/{netid}/send_token")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String sendCode(@PathParam("netid") String netid) {
 		JSONArray transactions = new JSONArray();
 
-		
 		DBObject document = new BasicDBObject();
 		DBObject res = new BasicDBObject();
 		res.put("result", 401);
-		
-		try{
-			
+
+		try {
+
 			DBCollection ms = mongoTemplate.getCollection("users");
-			
+
 			DBObject query = new BasicDBObject();
-			query.put("netid",netid);
+			query.put("netid", netid);
 			String phone = "";
 			DBCursor cursor = ms.find(query);
-			if(cursor.hasNext()) {
-				DBObject userObj =  cursor.next();
+			if (cursor.hasNext()) {
+				DBObject userObj = cursor.next();
 				phone = userObj.get("phone").toString();
 			}
 			DBObject value = new BasicDBObject();
-			
-			Integer randomPIN = (int)(Math.random()*9000)+1000;
+
+			Integer randomPIN = (int) (Math.random() * 9000) + 1000;
 			document.put("auth_code", randomPIN);
 			value.put("$set", document);
-			
+
 			WriteResult result = ms.update(query, value);
-			
-			if(result.wasAcknowledged()){
-				Util.SendSms(phone,randomPIN);
+
+			if (result.wasAcknowledged()) {
+				Util.SendSms(phone, randomPIN);
 				res.put("result", 200);
 			}
-			
+
+		} catch (Exception e) {
+
 		}
-		catch(Exception e){
-			
-		}
-		
+
 		return res.toString();
 	}
-	
-	
+
 	@POST
 	@Path("/{netid}/verify_phone")
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String verifyCode(@PathParam("netid") String netid,@FormParam("code") String code, @Context HttpHeaders header, @Context HttpServletResponse response) throws Exception {
-		
+	public String verifyCode(@PathParam("netid") String netid, @FormParam("code") String code,
+			@Context HttpHeaders header, @Context HttpServletResponse response) throws Exception {
+
 		JSONArray transactions = new JSONArray();
 		DBObject document = new BasicDBObject();
 		DBObject res = new BasicDBObject();
 		res.put("result", 401);
-		
-		try{
-			
+
+		try {
+
 			DBCollection ms = mongoTemplate.getCollection("users");
-			
+
 			DBObject query = new BasicDBObject();
-			query.put("netid",netid);
-			Integer auth_code =0;
+			query.put("netid", netid);
+			Integer auth_code = 0;
 			DBCursor cursor = ms.find(query);
-			if(cursor.hasNext()) {
-				DBObject userObj =  cursor.next();
+			if (cursor.hasNext()) {
+				DBObject userObj = cursor.next();
 				auth_code = Integer.parseInt(userObj.get("auth_code").toString());
 			}
-			
-			if(auth_code == Integer.parseInt(code)){
+
+			if (auth_code == Integer.parseInt(code)) {
 				res.put("result", 200);
 			}
-			
+
+		} catch (Exception e) {
+
 		}
-		catch(Exception e){
-			
-		}
-		
+
 		return res.toString();
 	}
-	
-	
 
 }

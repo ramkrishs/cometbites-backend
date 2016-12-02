@@ -8,8 +8,8 @@ public class MongoTemplate {
 
 	private final MongoTemplate mongoTemplate;
 
-    @Autowired
-    public MongoTemplate(MongoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
-    }
+	@Autowired
+	public MongoTemplate(MongoTemplate mongoTemplate) {
+		this.mongoTemplate = mongoTemplate;
+	}
 }

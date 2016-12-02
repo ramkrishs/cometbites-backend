@@ -5,30 +5,32 @@ import org.springframework.data.annotation.Id;
 
 import com.cometbites.util.Util;
 
-
 public class Payment {
 
-    @Id
-    public String id;
+	@Id
+	public String id;
 
-    private double amount;
-    private boolean authorized;
-    private Card card;
+	private double amount;
+	private boolean authorized;
+	private Card card;
 
-    public Payment() {}
-    
-    public Payment(String paymentOption) {
-    	JSONObject option = new JSONObject(paymentOption);
-    	
-    	if(option.getString("cvv") == null) {
-    		card = new CometCard(Long.parseLong(option.getString("cardno")));
-    	} else {
-    		card = new CreditCard(Long.parseLong(option.getString("cardno")), Util.parseDate(option.getString("expdate"), Util.EXP_DATE_FORMAT), Integer.parseInt(option.getString("cvv")));
-    	}
-    	
-    	card.setCardName(option.getString("cardname"));
-    }
-    
+	public Payment() {
+	}
+
+	public Payment(String paymentOption) {
+		JSONObject option = new JSONObject(paymentOption);
+
+		if (option.getString("cvv") == null) {
+			card = new CometCard(Long.parseLong(option.getString("cardno")));
+		} else {
+			card = new CreditCard(Long.parseLong(option.getString("cardno")),
+					Util.parseDate(option.getString("expdate"), Util.EXP_DATE_FORMAT),
+					Integer.parseInt(option.getString("cvv")));
+		}
+
+		card.setCardName(option.getString("cardname"));
+	}
+
 	public String getId() {
 		return id;
 	}
@@ -44,7 +46,7 @@ public class Payment {
 	public void setAmount(double amount) {
 		this.amount = amount;
 	}
-	
+
 	public Card getCard() {
 		return card;
 	}
@@ -62,10 +64,9 @@ public class Payment {
 	}
 
 	@Override
-    public String toString() {
-        return String.format(
-                "Payment[id=%s, amount='%s', authorized='%s']",
-                id, Double.toString(amount), Boolean.toString(authorized));
-    }
+	public String toString() {
+		return String.format("Payment[id=%s, amount='%s', authorized='%s']", id, Double.toString(amount),
+				Boolean.toString(authorized));
+	}
 
 }

@@ -21,7 +21,7 @@ public class Menu {
 	public void setItems(List<Item> items) {
 		this.items = items;
 	}
-	
+
 	public String getId() {
 		return id;
 	}
@@ -41,17 +41,17 @@ public class Menu {
 	@Override
 	public String toString() {
 		StringBuilder aux = new StringBuilder("[");
-		
+
 		for (Item item : items) {
 			aux.append(item.toString()).append(",");
 		}
-		
-		//remove the ',' after last item
-		if(aux.length() > 1) 
-			aux.deleteCharAt(aux.length()-1);
-		
+
+		// remove the ',' after last item
+		if (aux.length() > 1)
+			aux.deleteCharAt(aux.length() - 1);
+
 		aux.append("]");
-		
+
 		return aux.toString();
 	}
 }
