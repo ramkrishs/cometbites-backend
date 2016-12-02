@@ -290,6 +290,7 @@ public class Orders {
 
 			DBObject update = new BasicDBObject();
 			DBObject values = new BasicDBObject("status", Status.PREPARED.getValue());
+			//FIXME do we really want to update the order time when we update to prepared?
 			values.put("date", Util.getCurrentTime());
 			update.put("$set", values);
 
@@ -303,7 +304,7 @@ public class Orders {
 		}
 		return res.toString();
 	}
-
+	
 	@GET
 	@Path("/update/pickup/{invoice}")
 	public String completeOrder(@PathParam("invoice") String invoice) {
@@ -319,6 +320,7 @@ public class Orders {
 			DBObject update = new BasicDBObject();
 
 			DBObject values = new BasicDBObject("status", Status.READY_FOR_PICKUP.getValue());
+			//FIXME do we really want to update the order time when we update to ready for pickup?
 			values.put("date", Util.getCurrentTime());
 			update.put("$set", values);
 
@@ -340,6 +342,33 @@ public class Orders {
 
 		return res.toString();
 
+	}
+	
+	@GET
+	@Path("/update/finish/{invoice}")
+	public String finishOrder(@PathParam("invoice") String invoice) {
+
+		DBObject res = new BasicDBObject();
+		res.put("result", 400);
+		try {
+
+			DBCollection ms = mongoTemplate.getCollection("orders");
+			DBObject query = new BasicDBObject();
+			query.put("invoice", invoice);
+
+			DBObject update = new BasicDBObject();
+			DBObject values = new BasicDBObject("status", Status.PICKED_UP.getValue());
+			update.put("$set", values);
+
+			WriteResult result = ms.update(query, update);
+			if (result.wasAcknowledged()) {
+				res.put("result", 200);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return res.toString();
 	}
 
 }
