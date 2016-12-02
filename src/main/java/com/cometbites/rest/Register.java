@@ -26,7 +26,6 @@ import com.cometbites.model.Ticket;
 import com.cometbites.util.Util;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import com.mongodb.WriteResult;
 
 @Component
 @Path("register")
@@ -99,7 +98,6 @@ public class Register {
 		Item item = new Item(itemID, name, description, Double.parseDouble(price));
 
 		order.addItem(item);
-		// dBFacade.saveOrder(order);
 
 		return item.getDescription();
 	}
@@ -118,8 +116,9 @@ public class Register {
 	@Path("/addquantity/{itemID}")
 	public String informQuantity(@PathParam("itemID") String itemID, @FormParam("name") String name,
 			@FormParam("description") String description, @FormParam("price") String price,
-			@FormParam("quantity") String quantity, @Context HttpHeaders headers) {
+			@FormParam("quantity") String quantity, @FormParam("fjID") String fjID, @Context HttpHeaders headers) {
 		Order order = getOrderByUID(headers.getHeaderString("UID"));
+		order.setFoodJoint(new FoodJoint(fjID));
 
 		order.updateQuantity(new Item(itemID, name, description, Double.parseDouble(price)),
 				Integer.parseInt(quantity));
@@ -166,14 +165,16 @@ public class Register {
 	public String makePayment(@FormParam("option") String paymentOption, @Context HttpHeaders headers) {
 		Order order = getOrderByUID(headers.getHeaderString("UID"));
 
-		Ticket ticket = order.concludeOrder(paymentOption);
+		Ticket ticket = order.concludeOrder(paymentOption, dBFacade.calculateWaitTime(order.getFoodJoint().getId()));
 
 		dBFacade.updateOrder(order);
-		String netid = auth.getCustomerID(headers.getHeaderString("UID"));
-
-		String phone = dBFacade.getPhonenumberbyNetid(netid);
 		ticket.setCode(order.getInvoice());
-		Util.SendSms(phone, "Thanks for Using cometbites Your Payment accepted, Order Status is IN PREPRATION");
+
+		sendSMS(headers.getHeaderString("UID"), "Thank you for using CometBites!"
+				+ "\nYour payment was accepted and your order is In Preparation."
+				+ "\nInvoice: "+order.getInvoice()+"."
+				+ "\nWait Time: "+order.getTicket().getWaitTime()+" minutes.");
+		
 		return ticket.toString();
 	}
 
@@ -206,15 +207,14 @@ public class Register {
 
 			ticket.setCode(order.getInvoice());
 
-			// FIXME when waitTime logic is done
-			ticket.setWaitTime("0");
+			ticket.setWaitTime(Float.toString(dBFacade.calculateWaitTime(order.getFoodJoint().getId())));
 
-			String netid = auth.getCustomerID(headers.getHeaderString("UID"));
-
-			String phone = dBFacade.getPhonenumberbyNetid(netid);
-
-			Util.SendSms(phone,
-					"Thanks for choosing Eticket Remember that your order will start preparation once you in the counter");
+			sendSMS(headers.getHeaderString("UID"), "Thank you for using CometBites!"
+					+ "\nYour e-Ticket was generated. Please note your order will only be prepared after the payment."
+					+ "\nInvoice: "+order.getInvoice()+"."
+					+ "\nDue amount: $"+order.getTotal()+"."
+					+ "\nWait Time: "+ticket.getWaitTime()+" minutes.");
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -228,7 +228,21 @@ public class Register {
 	 * @return
 	 */
 	private Order getOrderByUID(String customerUID) {
-		return dBFacade.getNewOrderByCustomerID(auth.getCustomerID(customerUID));
+		
+		Order order = dBFacade.getNewOrderByCustomerID(auth.getCustomerID(customerUID));
+				
+		if (order == null) {
+			order = new Order();
+			order.setCustomer(new Customer(auth.getCustomerID(customerUID)));
+		}
+		
+		return order;
+	}
+	
+	private void sendSMS(String UID, String msg) {
+		String netid = auth.getCustomerID(UID);
+		String phone = dBFacade.getPhonenumberbyNetid(netid);
+		Util.SendSms(phone, msg);
 	}
 
 }

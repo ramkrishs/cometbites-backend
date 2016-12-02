@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MongoTemplate {
 
+	@SuppressWarnings("unused")
 	private final MongoTemplate mongoTemplate;
 
 	@Autowired

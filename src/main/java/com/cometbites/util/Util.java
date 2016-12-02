@@ -10,7 +10,7 @@ import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 
 public class Util {
-
+	
 	public static final String ACCOUNT_SID = "ACb447e910cc2c38920a8733f10210063e";
 	public static final String AUTH_TOKEN = "a6556df008a04685cd0b5ea3070d2945";
 	public static final String INVOICE_PREFIX = "CB";
@@ -65,6 +65,14 @@ public class Util {
 		SimpleDateFormat format = new SimpleDateFormat(ORDER_DATE_FORMAT);
 
 		return format.format(cal.getTime());
+	}
+	
+	public static String getFormattedDate(Date date, String format) {
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat formatter = new SimpleDateFormat(format);
+		cal.setTime(date);
+
+		return formatter.format(cal.getTime());
 	}
 
 	public static Date parseDate(String date, String format) {

@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
-import com.cometbites.db.Auth;
 import com.cometbites.db.DBFacade;
 import com.cometbites.model.Status;
 import com.cometbites.util.Util;
@@ -38,9 +37,6 @@ public class Orders {
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
-
-	@Autowired
-	private Auth auth;
 
 	@Autowired
 	private DBFacade dBFacade;
@@ -95,13 +91,14 @@ public class Orders {
 	}
 
 	@GET
-	@Path("/foodjoint/{fjID}")
-	public String getOrderByFoodJointID(@PathParam("fjID") String fjID) {
+	@Path("/inpreparation/foodjoint/{fjID}")
+	public String getInPreparationByFoodJointID(@PathParam("fjID") String fjID) {
 
 		DBCollection ms = mongoTemplate.getCollection("orders");
 		JSONArray orders = new JSONArray();
 		DBObject query = new BasicDBObject();
 		query.put("fjID", fjID);
+		query.put("status", Status.IN_PREPARATION.getValue());
 		DBCursor cursor = ms.find(query);
 
 		while (cursor.hasNext()) {
@@ -119,6 +116,61 @@ public class Orders {
 
 		return orders.toString();
 	}
+	
+	@GET
+	@Path("/prepared/foodjoint/{fjID}")
+	public String getPreparedByFoodJointID(@PathParam("fjID") String fjID) {
+
+		DBCollection ms = mongoTemplate.getCollection("orders");
+		JSONArray orders = new JSONArray();
+		DBObject query = new BasicDBObject();
+		query.put("fjID", fjID);
+		query.put("status", Status.PREPARED.getValue());
+		DBCursor cursor = ms.find(query);
+
+		while (cursor.hasNext()) {
+			JSONObject order = new JSONObject();
+			DBObject userObj = cursor.next();
+			order.put("netid", userObj.get("netid"));
+			order.put("fjID", userObj.get("fjID"));
+			order.put("total", userObj.get("total"));
+			order.put("cardNo", userObj.get("cardNo"));
+			order.put("date", userObj.get("date"));
+			order.put("invoice", userObj.get("invoice"));
+			order.put("items", userObj.get("items"));
+			orders.put(order);
+		}
+
+		return orders.toString();
+	}
+	
+	@GET
+	@Path("/pickup/foodjoint/{fjID}")
+	public String getReadyForPickupByFoodJointID(@PathParam("fjID") String fjID) {
+
+		DBCollection ms = mongoTemplate.getCollection("orders");
+		JSONArray orders = new JSONArray();
+		DBObject query = new BasicDBObject();
+		query.put("fjID", fjID);
+		query.put("status", Status.READY_FOR_PICKUP.getValue());
+		DBCursor cursor = ms.find(query);
+
+		while (cursor.hasNext()) {
+			JSONObject order = new JSONObject();
+			DBObject userObj = cursor.next();
+			order.put("netid", userObj.get("netid"));
+			order.put("fjID", userObj.get("fjID"));
+			order.put("total", userObj.get("total"));
+			order.put("cardNo", userObj.get("cardNo"));
+			order.put("date", userObj.get("date"));
+			order.put("invoice", userObj.get("invoice"));
+			order.put("items", userObj.get("items"));
+			orders.put(order);
+		}
+
+		return orders.toString();
+	}
+	
 
 	@GET
 	@Path("/{invoice}")
@@ -224,7 +276,6 @@ public class Orders {
 		return waitTime;
 	}
 
-	// TODO implement method
 	@GET
 	@Path("/update/kitchen/{invoice}")
 	public String updateStatus(@PathParam("invoice") String invoice) {
@@ -277,7 +328,9 @@ public class Orders {
 
 				String phone = dBFacade.getPhonenumberbyNetid(netid);
 
-				Util.SendSms(phone, "Thanks for Using cometbites Your Order is complete and is Ready for Pickup");
+				Util.SendSms(phone,  "Thank you for using CometBites!"
+						+ "\nYour order is complete and is Ready for Pickup."
+						+ "\nInvoice: "+invoice+".");
 				res.put("result", 200);
 			}
 

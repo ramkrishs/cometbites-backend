@@ -5,11 +5,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-
-import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
@@ -27,6 +22,7 @@ public class Order {
 	private Status status;
 	private double total;
 	private Date date;
+	private Ticket ticket;
 	private Map<String, LineItem> orderItems;
 
 	private Customer customer;
@@ -125,8 +121,16 @@ public class Order {
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
 	}
+	
+	public Ticket getTicket() {
+		return ticket;
+	}
 
-	public Ticket concludeOrder(String paymentOption) {
+	public void setTicket(Ticket ticket) {
+		this.ticket = ticket;
+	}
+
+	public Ticket concludeOrder(String paymentOption, float waitTime) {
 
 		Payment payment = new Payment(paymentOption);
 		payment.setAmount(total);
@@ -141,10 +145,10 @@ public class Order {
 
 		updateStatus();
 
-		String waitTime = calculateWaitTime();
+		calculateWaitTime();
 
-		Ticket ticket = new Ticket();
-		ticket.setWaitTime(waitTime);
+		ticket = new Ticket();
+		ticket.setWaitTime(Float.toString(waitTime));
 
 		return ticket;
 	}

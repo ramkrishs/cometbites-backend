@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.management.Query;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +31,6 @@ public class DBFacade {
 	private MongoTemplate mongoTemplate;
 
 	public String getFoodJoints() {
-
 		DBCollection ms = mongoTemplate.getCollection("foodjoints");
 		JSONArray foodJoints = new JSONArray();
 		DBCursor cursor = ms.find();
@@ -41,12 +38,15 @@ public class DBFacade {
 		while (cursor.hasNext()) {
 			JSONObject foodJoint = new JSONObject();
 			DBObject foodJointObj = cursor.next();
+			
+			Integer fjID = (int) Double.parseDouble(foodJointObj.get("fjID").toString());
+
 			foodJoint.put("name", foodJointObj.get("name"));
 			foodJoint.put("logo", foodJointObj.get("logo"));
 			foodJoint.put("fjID", foodJointObj.get("fjID"));
 			foodJoint.put("closed_time", foodJointObj.get("closed_time"));
 			foodJoint.put("open_time", foodJointObj.get("open_time"));
-			foodJoint.put("wait_time", foodJointObj.get("wait_time"));
+			foodJoint.put("wait_time", calculateWaitTime(Integer.toString(fjID)));
 			foodJoints.put(foodJoint);
 
 		}
@@ -136,6 +136,8 @@ public class DBFacade {
 			DBCollection ms = mongoTemplate.getCollection("orders");
 
 			ms.insert(document);
+			
+			calculateWaitTime(order.getFoodJoint().getId());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -173,6 +175,41 @@ public class DBFacade {
 		newOrder.put("items", itemObjects);
 
 		ms.update(query, newOrder);
+		
+		calculateWaitTime(order.getFoodJoint().getId());
+	}
+	
+	public void updateStatus(Order order, Status status) {
+		DBCollection ms = mongoTemplate.getCollection("orders");
+		DBObject query = new BasicDBObject();
+		query.put("invoice", order.getInvoice());
+
+		DBObject newOrder = new BasicDBObject();
+
+		newOrder.put("status", status.getValue());
+		newOrder.put("netid", order.getCustomer().getId());
+		newOrder.put("total", Double.toString(order.getTotal()));
+		newOrder.put("date", Util.getFormattedDate(order.getDate(), Util.ORDER_DATE_FORMAT));
+		newOrder.put("invoice", order.getInvoice());
+		newOrder.put("fjID", order.getFoodJoint().getId());
+
+		List<DBObject> itemObjects = new ArrayList<>();
+
+		for (LineItem lineItem : order.getOrderItems()) {
+			DBObject dbItem = new BasicDBObject();
+
+			dbItem.put("id", lineItem.getItem().getId());
+			dbItem.put("name", lineItem.getItem().getName());
+			dbItem.put("price", Double.toString(lineItem.getItem().getPrice()));
+			dbItem.put("quantity", Integer.toString(lineItem.getQuantity()));
+
+			itemObjects.add(dbItem);
+		}
+		newOrder.put("items", itemObjects);
+		
+		ms.update(query, newOrder);
+		
+		calculateWaitTime(order.getFoodJoint().getId());
 	}
 
 	public String getOrders() {
@@ -253,7 +290,6 @@ public class DBFacade {
 	}
 
 	public String getNetidFromInvoice(String invoice) {
-		User user = null;
 		String netid = "";
 		try {
 			DBCollection ms = mongoTemplate.getCollection("orders");
@@ -261,7 +297,6 @@ public class DBFacade {
 			query.put("invoice", invoice);
 			DBCursor cursor = ms.find(query);
 			while (cursor.hasNext()) {
-				JSONObject order = new JSONObject();
 				DBObject userObj = cursor.next();
 				netid = userObj.get("netid").toString();
 			}
@@ -291,22 +326,26 @@ public class DBFacade {
 		return res.toString();
 	}
 
-	public float calculateWaitTime(int id) {
-		DBCollection ms = mongoTemplate.getCollection("foodjoints");
+	public float calculateWaitTime(String fjID) {
 		DBCollection ms_orders = mongoTemplate.getCollection("orders");
-		DBObject query = new BasicDBObject();
-		query.put("fjID", id);
-		DBCursor cursor = ms.find(query);
 		
 		List<String> list = new ArrayList<String>();
 		list.add(Status.IN_PREPARATION.getValue());
-		list.add(Status.PREPARED.getValue());list.add(Status.DELAYED.getValue());list.add(Status.PENDING.getValue());
+		list.add(Status.PREPARED.getValue());
+		list.add(Status.DELAYED.getValue());
+		list.add(Status.PENDING.getValue());
+		
 		DBObject query_orders = new BasicDBObject();
-		query_orders.put("fjID", String.valueOf(id));
-		query_orders.put("order_status",new BasicDBObject("$in",list) );
+		query_orders.put("fjID", fjID);
+		query_orders.put("status",new BasicDBObject("$in",list) );
 
 		Integer order_count = ms_orders.find(query_orders).count();
 		
+		
+		DBCollection ms = mongoTemplate.getCollection("foodjoints");
+		DBObject query = new BasicDBObject();
+		query.put("fjID", Integer.parseInt(fjID));
+		DBCursor cursor = ms.find(query);
 		
 		float chefsEfficiency, helpersEfficiency, delayTime, waitTime = 0;
 		int numberOfChefs, numberOfHelpers;
@@ -324,15 +363,18 @@ public class DBFacade {
 
 			waitTime = (chefsEfficiency / numberOfChefs) + (helpersEfficiency / numberOfHelpers) + delayTime;
 		}
-
+		
+		waitTime = waitTime + (waitTime * order_count);
+		
 		DBObject document = new BasicDBObject();
 		document.put("wait_time", Float.toString(waitTime));
 		DBObject value = new BasicDBObject();
 		value.put("$set", document);
 
 		ms.update(query, value);
-
+		
 		return waitTime;
 	}
+	
 
 }

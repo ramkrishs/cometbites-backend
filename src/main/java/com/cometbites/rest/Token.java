@@ -12,8 +12,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
@@ -37,14 +35,11 @@ public class Token {
 	@Path("/{netid}/send_token")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String sendCode(@PathParam("netid") String netid) {
-		JSONArray transactions = new JSONArray();
-
 		DBObject document = new BasicDBObject();
 		DBObject res = new BasicDBObject();
 		res.put("result", 401);
 
 		try {
-
 			DBCollection ms = mongoTemplate.getCollection("users");
 
 			DBObject query = new BasicDBObject();
@@ -82,8 +77,6 @@ public class Token {
 	public String verifyCode(@PathParam("netid") String netid, @FormParam("code") String code,
 			@Context HttpHeaders header, @Context HttpServletResponse response) throws Exception {
 
-		JSONArray transactions = new JSONArray();
-		DBObject document = new BasicDBObject();
 		DBObject res = new BasicDBObject();
 		res.put("result", 401);
 
