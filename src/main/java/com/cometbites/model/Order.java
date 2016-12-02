@@ -130,10 +130,8 @@ public class Order {
 		this.ticket = ticket;
 	}
 
-	public Ticket concludeOrder(String paymentOption, float waitTime) {
+	public Ticket concludeOrder(Payment payment, float waitTime) {
 
-		Payment payment = new Payment(paymentOption);
-		payment.setAmount(total);
 		long cardNumber = payment.getCard().getNumber();
 
 		boolean authorized = UTDPaymentAdapter.getInstance().authorize(cardNumber);

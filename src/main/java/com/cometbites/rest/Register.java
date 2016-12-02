@@ -17,10 +17,14 @@ import org.springframework.stereotype.Component;
 
 import com.cometbites.db.Auth;
 import com.cometbites.db.DBFacade;
+import com.cometbites.model.Card;
+import com.cometbites.model.CometCard;
+import com.cometbites.model.CreditCard;
 import com.cometbites.model.Customer;
 import com.cometbites.model.FoodJoint;
 import com.cometbites.model.Item;
 import com.cometbites.model.Order;
+import com.cometbites.model.Payment;
 import com.cometbites.model.Status;
 import com.cometbites.model.Ticket;
 import com.cometbites.util.Util;
@@ -162,10 +166,25 @@ public class Register {
 	 */
 	@POST
 	@Path("/order/payment")
-	public String makePayment(@FormParam("option") String paymentOption, @Context HttpHeaders headers) {
+	public String makePayment(@FormParam("cardname") String cardName, @FormParam("cardno") String cardNo,
+			@FormParam("cvv") String cvv, @FormParam("expdate") String expDate, @Context HttpHeaders headers) {
 		Order order = getOrderByUID(headers.getHeaderString("UID"));
+		
+		Card card = null;
+		if (cvv == null || "".equals(cvv)) {
+			card = new CometCard(Long.parseLong(cardNo));
+		} else {
+			card = new CreditCard(Long.parseLong(cardNo),
+					Util.parseDate(expDate, Util.EXP_DATE_FORMAT),
+					Integer.parseInt(cvv));
+		}
 
-		Ticket ticket = order.concludeOrder(paymentOption, dBFacade.calculateWaitTime(order.getFoodJoint().getId()));
+		card.setCardName(cardName);
+
+		Payment payment = new Payment(card);
+		payment.setAmount(order.getTotal());
+		
+		Ticket ticket = order.concludeOrder(payment, dBFacade.calculateWaitTime(order.getFoodJoint().getId()));
 
 		dBFacade.updateOrder(order);
 		ticket.setCode(order.getInvoice());

@@ -16,7 +16,7 @@ public class Util {
 	public static final String INVOICE_PREFIX = "CB";
 
 	public static final String ORDER_DATE_FORMAT = "MM/dd/yyyy HH:mm:ssa";
-	public static final String EXP_DATE_FORMAT = "MM/dd/yyyy";
+	public static final String EXP_DATE_FORMAT = "MM/yyyy";
 
 	public static void SendSms(String phoneno, Integer code) {
 

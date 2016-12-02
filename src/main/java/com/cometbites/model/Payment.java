@@ -1,9 +1,6 @@
 package com.cometbites.model;
 
-import org.json.JSONObject;
 import org.springframework.data.annotation.Id;
-
-import com.cometbites.util.Util;
 
 public class Payment {
 
@@ -17,18 +14,8 @@ public class Payment {
 	public Payment() {
 	}
 
-	public Payment(String paymentOption) {
-		JSONObject option = new JSONObject(paymentOption);
-
-		if (option.getString("cvv") == null) {
-			card = new CometCard(Long.parseLong(option.getString("cardno")));
-		} else {
-			card = new CreditCard(Long.parseLong(option.getString("cardno")),
-					Util.parseDate(option.getString("expdate"), Util.EXP_DATE_FORMAT),
-					Integer.parseInt(option.getString("cvv")));
-		}
-
-		card.setCardName(option.getString("cardname"));
+	public Payment(Card card) {
+		this.card = card;
 	}
 
 	public String getId() {
