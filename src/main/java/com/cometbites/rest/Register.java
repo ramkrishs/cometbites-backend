@@ -203,7 +203,7 @@ public class Register {
 	 * @param paymentOption
 	 * @return
 	 */
-	@POST
+	@GET
 	@Path("/order/eticket")
 	public String generateEticket(@Context HttpHeaders headers) {
 		Ticket ticket = new Ticket();
