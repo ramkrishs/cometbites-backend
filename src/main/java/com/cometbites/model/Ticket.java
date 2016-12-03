@@ -45,7 +45,7 @@ public class Ticket {
 
 	@Override
 	public String toString() {
-		StringBuilder aux = new StringBuilder("{ \"code\": \"%s\", \"waittime\": \"%s\" }");
+		StringBuilder aux = new StringBuilder("{ \"code\": \"%s\", \"waitTime\": \"%s\" }");
 		return String.format(aux.toString(), code, waitTime);
 	}
 
