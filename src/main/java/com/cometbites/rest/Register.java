@@ -186,6 +186,7 @@ public class Register {
 		
 		Ticket ticket = order.concludeOrder(payment, dBFacade.calculateWaitTime(order.getFoodJoint().getId()));
 
+		dBFacade.saveTransaction(payment, order);
 		dBFacade.updateOrder(order);
 		ticket.setCode(order.getInvoice());
 

@@ -5,14 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
-
-import com.cometbites.util.Util;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
 
 @Component
 public class Order {
@@ -27,9 +20,6 @@ public class Order {
 
 	private Customer customer;
 	private FoodJoint foodJoint;
-
-	@Autowired
-	private MongoTemplate mongoTemplate;
 
 	public Order() {
 		orderItems = new HashMap<String, LineItem>();
@@ -139,7 +129,7 @@ public class Order {
 			UTDPaymentAdapter.getInstance().charge(cardNumber, payment.getAmount());
 		}
 
-		saveTransaction(payment, this);
+		saveTransaction();
 
 		updateStatus();
 
@@ -175,19 +165,19 @@ public class Order {
 	// return orderWaitTime;
 	// }
 
-	public void saveTransaction(Payment payment, Order order) {
-		DBObject document = new BasicDBObject();
-
-		try {
-			document.put("invoice", order.getInvoice());
-			document.put("netid", order.getCustomer().getId());
-			document.put("amount", payment.getAmount());
-			document.put("cardNo", payment.getCard().getNumber());
-			document.put("date", Util.getCurrentTime());
-
-			DBCollection ms = mongoTemplate.getCollection("transactions");
-			ms.insert(document);
-		} catch (Exception e) {
-		}
+	public void saveTransaction() {
+//		DBObject document = new BasicDBObject();
+//
+//		try {
+//			document.put("invoice", order.getInvoice());
+//			document.put("netid", order.getCustomer().getId());
+//			document.put("amount", payment.getAmount());
+//			document.put("cardNo", payment.getCard().getNumber());
+//			document.put("date", Util.getCurrentTime());
+//
+//			DBCollection ms = mongoTemplate.getCollection("transactions");
+//			ms.insert(document);
+//		} catch (Exception e) {
+//		}
 	}
 }
