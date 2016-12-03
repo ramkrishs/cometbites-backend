@@ -189,11 +189,14 @@ public class Register {
 		dBFacade.saveTransaction(payment, order);
 		dBFacade.updateOrder(order);
 		ticket.setCode(order.getInvoice());
-
+		
 		sendSMS(headers.getHeaderString("UID"), "Thank you for using CometBites!"
 				+ "\nYour payment was accepted and your order is In Preparation."
 				+ "\nInvoice: "+order.getInvoice()+"."
 				+ "\nWait Time: "+order.getTicket().getWaitTime()+" minutes.");
+		
+		//Remove Session Data
+		order.resetCurrentOrder();
 		
 		return ticket.toString();
 	}

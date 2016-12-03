@@ -180,4 +180,11 @@ public class Order {
 //		} catch (Exception e) {
 //		}
 	}
+	
+	public void resetCurrentOrder(){
+		this.orderItems = new HashMap<String, LineItem>();
+		this.status = Status.NEW;
+		this.ticket = new Ticket();
+		
+	}
 }
